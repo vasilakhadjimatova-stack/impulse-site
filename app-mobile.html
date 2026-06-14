@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impulse ERP — Telefon ilovasi ko'rinishi (maket)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/font/lucide.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0E13; --surface:#161A22; --surface2:#1E232E; --line:rgba(255,255,255,.08);
+  --txt:#F3F5F9; --txt2:#A4ADBE; --txt3:#717A8C;
+  --brand:#F2453B; --brand2:#FF6A5E; --brand-bg:rgba(242,69,59,.14);
+  --green:#34D399; --green-bg:rgba(52,211,153,.13);
+  --amber:#FBBF24; --amber-bg:rgba(251,191,36,.13);
+  --blue:#60A5FA; --blue-bg:rgba(96,165,250,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#06070A;color:var(--txt);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  background-image:radial-gradient(900px 600px at 50% -10%,rgba(242,69,59,.10),transparent 60%)}
+.num{font-variant-numeric:tabular-nums}
+
+/* phone frame */
+.phone{width:390px;max-width:100%;height:800px;background:#000;border-radius:46px;padding:11px;
+  box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06)}
+.screen{width:100%;height:100%;background:var(--bg);border-radius:36px;overflow:hidden;
+  position:relative;display:flex;flex-direction:column}
+
+/* status bar */
+.status{height:44px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px;font-size:13.5px;font-weight:700;flex:0 0 auto}
+.status .r{display:flex;gap:6px;align-items:center;font-size:14px}
+
+/* app header */
+.hd{padding:6px 20px 14px;display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.hd-av{width:42px;height:42px;border-radius:13px;background:linear-gradient(150deg,#EF5A52,#C42218);
+  display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:16px}
+.hd-g{flex:1;min-width:0}
+.hd-g .s{font-size:12px;color:var(--txt3)}
+.hd-g .n{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.hd-bell{width:42px;height:42px;border-radius:13px;background:var(--surface);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:19px;position:relative}
+.hd-bell .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;background:var(--brand);border-radius:50%;border:2px solid var(--surface)}
+
+/* scroll body */
+.body{flex:1;overflow-y:auto;padding:4px 18px 100px}
+.body::-webkit-scrollbar{display:none}
+
+/* KPI scroller */
+.kpis{display:flex;gap:11px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px}
+.kpis::-webkit-scrollbar{display:none}
+.kpi{flex:0 0 138px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px}
+.kpi i{font-size:20px;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center}
+.kpi i.r{background:var(--brand-bg);color:var(--brand2)}.kpi i.b{background:var(--blue-bg);color:var(--blue)}
+.kpi i.a{background:var(--amber-bg);color:var(--amber)}.kpi i.g{background:var(--green-bg);color:var(--green)}
+.kpi .v{font-size:23px;font-weight:800;letter-spacing:-.5px;margin-top:12px}
+.kpi .l{font-size:11.5px;color:var(--txt3);margin-top:2px}
+
+.sec{display:flex;align-items:center;justify-content:space-between;margin:0 2px 12px}
+.sec h2{font-size:15px;font-weight:800;letter-spacing:-.2px}
+.sec a{font-size:12.5px;color:var(--brand2);font-weight:600}
+
+/* event cards */
+.ev{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:12px;
+  display:flex;gap:13px;align-items:center}
+.ev-date{width:50px;flex:0 0 auto;text-align:center;background:var(--surface2);border-radius:12px;padding:8px 0}
+.ev-date .d{font-size:19px;font-weight:800;line-height:1}.ev-date .m{font-size:10px;color:var(--txt3);text-transform:uppercase;margin-top:2px}
+.ev-bd{flex:1;min-width:0}
+.ev-t{font-size:14.5px;font-weight:700}
+.ev-m{font-size:12px;color:var(--txt3);margin-top:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ev-zal{background:var(--surface2);padding:2px 8px;border-radius:7px;color:var(--txt2);font-weight:600;font-size:11px}
+.ev-amt{text-align:right;flex:0 0 auto}
+.ev-amt .a{font-size:14px;font-weight:800}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:5px}
+.pill.a{background:var(--amber-bg);color:var(--amber)}.pill.g{background:var(--green-bg);color:var(--green)}.pill.b{background:var(--blue-bg);color:var(--blue)}
+
+.task{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;
+  display:flex;gap:12px;align-items:center}
+.task-ic{width:40px;height:40px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;
+  justify-content:center;font-size:18px;color:var(--brand2);flex:0 0 auto}
+.task-t{font-size:13.5px;font-weight:700}.task-m{font-size:11.5px;color:var(--txt3);margin-top:2px}
+
+/* FAB */
+.fab{position:absolute;right:22px;bottom:96px;width:58px;height:58px;border-radius:19px;
+  background:var(--brand);display:flex;align-items:center;justify-content:center;color:#fff;font-size:27px;
+  box-shadow:0 10px 28px rgba(242,69,59,.5)}
+
+/* bottom tab bar */
+.tabs{position:absolute;left:0;right:0;bottom:0;height:84px;background:rgba(18,21,28,.94);
+  backdrop-filter:blur(16px);border-top:1px solid var(--line);display:flex;align-items:flex-start;
+  justify-content:space-around;padding:10px 8px 0}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--txt3);
+  font-size:10.5px;font-weight:600}
+.tab i{font-size:23px}
+.tab.on{color:var(--brand2)}
+.home-ind{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:128px;height:5px;
+  background:rgba(255,255,255,.3);border-radius:3px}
+
+.cap{text-align:center;margin-top:20px;color:#5a6273;font-size:13px;max-width:390px}
+</style>
+</head>
+<body>
+<div>
+<div class="phone">
+  <div class="screen">
+    <div class="status"><span>9:41</span><span class="r"><i class="icon-signal-high" style="font-size:15px"></i><i class="icon-wifi" style="font-size:15px"></i><i class="icon-battery-full" style="font-size:17px"></i></span></div>
+
+    <div class="hd">
+      <div class="hd-av">T</div>
+      <div class="hd-g"><div class="s">Xush kelibsiz 👋</div><div class="n">Tohirbek</div></div>
+      <div class="hd-bell"><i class="icon-bell"></i><span class="dot"></span></div>
+    </div>
+
+    <div class="body">
+      <div class="kpis">
+        <div class="kpi"><i class="r"><i class="icon-banknote"></i></i><div class="v num">83.4M</div><div class="l">Bu oy daromad</div></div>
+        <div class="kpi"><i class="b"><i class="icon-party-popper"></i></i><div class="v num">14</div><div class="l">Tadbirlar</div></div>
+        <div class="kpi"><i class="a"><i class="icon-list-checks"></i></i><div class="v num">5</div><div class="l">Vazifalar</div></div>
+        <div class="kpi"><i class="r"><i class="icon-alert-triangle"></i></i><div class="v num">10.9M</div><div class="l">Debitorka</div></div>
+      </div>
+
+      <div class="sec"><h2>Yaqin tadbirlar</h2><a>Barchasi</a></div>
+      <div class="ev">
+        <div class="ev-date"><div class="d num">15</div><div class="m">Iyun</div></div>
+        <div class="ev-bd"><div class="ev-t">Konfrensiya</div><div class="ev-m"><span class="ev-zal">Asosiy Zal</span> 44 kishi · 09:00</div></div>
+        <div class="ev-amt"><div class="a num">10.98M</div><span class="pill a">Avans</span></div>
+      </div>
+      <div class="ev">
+        <div class="ev-date"><div class="d num">18</div><div class="m">Iyun</div></div>
+        <div class="ev-bd"><div class="ev-t">Seminar</div><div class="ev-m"><span class="ev-zal">Kichik Zal</span> Hamkorbank</div></div>
+        <div class="ev-amt"><div class="a num">4.20M</div><span class="pill g">To'liq</span></div>
+      </div>
+      <div class="ev">
+        <div class="ev-date"><div class="d num">22</div><div class="m">Iyun</div></div>
+        <div class="ev-bd"><div class="ev-t">Taqdimot</div><div class="ev-m"><span class="ev-zal">Asosiy Zal</span> Artel · 120 kishi</div></div>
+        <div class="ev-amt"><div class="a num">15.40M</div><span class="pill b">Kutilmoqda</span></div>
+      </div>
+
+      <div class="sec" style="margin-top:22px"><h2>Vazifalar</h2><a>Barchasi</a></div>
+      <div class="task"><div class="task-ic"><i class="icon-banknote"></i></div><div style="flex:1"><div class="task-t">Avans kirim: Mijoz #4848</div><div class="task-m">Moliya · bugun · shoshilinch</div></div><i class="icon-chevron-right" style="color:var(--txt3)"></i></div>
+      <div class="task"><div class="task-ic"><i class="icon-building-2"></i></div><div style="flex:1"><div class="task-t">Asosiy Zal tayyorla</div><div class="task-m">Tashkiliy · 15.06</div></div><i class="icon-chevron-right" style="color:var(--txt3)"></i></div>
+    </div>
+
+    <div class="fab"><i class="icon-plus"></i></div>
+
+    <nav class="tabs">
+      <div class="tab on"><i class="icon-layout-dashboard"></i> Asosiy</div>
+      <div class="tab"><i class="icon-party-popper"></i> Tadbirlar</div>
+      <div class="tab"><i class="icon-calendar-days"></i> Kalendar</div>
+      <div class="tab"><i class="icon-wallet"></i> Moliya</div>
+      <div class="tab"><i class="icon-menu"></i> Menyu</div>
+    </nav>
+    <div class="home-ind"></div>
+  </div>
+</div>
+<div class="cap">📱 Telefon ilovasi uslubi — pastда tugmalar, katta kartalar, «+» tugma. Telefonga o'rnatilsa, brauzersiz, alohida ilova bo'lib ochiladi.</div>
+</div>
+</body>
+</html>
