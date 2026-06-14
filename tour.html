@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Impulse Event Zone — 360° Virtual Sayr</title>
-<meta name="description" content="Impulse Event Zone zallari bo'ylab haqiqiy 360° virtual sayr. Asosiy zal, foye va bino tashqarisini onlayn aylanib ko'ring.">
+<meta name="description" content="Impulse Event Zone bo'ylab haqiqiy 360° virtual sayr. Scroll bilan bino tashqarisidan foye va asosiy zalga kiring.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -45,12 +45,15 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
 .cta:hover{transform:translateY(-2px)}
 .hint{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);font-size:11.5px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;opacity:.85;transition:opacity .6s;text-align:center;background:rgba(12,9,6,.4);padding:7px 16px;border-radius:30px;backdrop-filter:blur(6px)}
 .hint.hide{opacity:0}
+.scrollbar{position:fixed;right:26px;top:50%;transform:translateY(-50%);width:3px;height:170px;background:rgba(255,255,255,.12);border-radius:3px;z-index:5;pointer-events:none}
+.scrollbar-fill{position:absolute;left:0;top:0;width:100%;height:4%;background:linear-gradient(var(--gold),var(--gold-lt));border-radius:3px}
+.scrollbar .tick{position:absolute;left:-3px;width:9px;height:1px;background:rgba(255,255,255,.3)}
 .intro{position:fixed;inset:0;z-index:8;background:radial-gradient(120% 90% at 50% 40%,rgba(20,15,9,.5),rgba(8,6,4,.92));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;transition:opacity .9s,visibility .9s;padding:24px}
 .intro.hide{opacity:0;visibility:hidden}
 .intro .eyebrow{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold)}
 .intro h1{font-family:'Playfair Display';font-weight:600;font-size:clamp(30px,6vw,58px);line-height:1.1;color:#fff}
 .intro h1 em{font-style:normal;color:var(--gold-lt)}
-.intro p{color:var(--muted);font-size:15px;max-width:460px;font-weight:300}
+.intro p{color:var(--muted);font-size:15px;max-width:470px;font-weight:300}
 .intro .enter{margin-top:10px;background:linear-gradient(135deg,var(--gold),#9c7536);color:#1a1206;font-weight:600;font-size:14px;letter-spacing:1px;padding:14px 34px;border-radius:40px;border:0;cursor:pointer;box-shadow:0 12px 34px rgba(201,169,110,.4);transition:.3s;font-family:inherit}
 .intro .enter:hover{transform:translateY(-3px)}
 .intro .enter[disabled]{opacity:.6;cursor:default;transform:none}
@@ -62,12 +65,11 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
 .load .t{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
 .load .t span{color:var(--gold-lt)}
 @keyframes sp{to{transform:rotate(360deg)}}
-#fade{position:fixed;inset:0;z-index:6;background:#0c0a07;opacity:0;pointer-events:none;transition:opacity .42s ease}
 .err{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;text-align:center;padding:30px;background:#0c0a07;color:var(--muted);font-size:15px;line-height:1.7}
 @media(max-width:680px){
   .nav{display:none}.center-title{font-size:12px;letter-spacing:2px}
   .top{top:22px;left:22px;right:22px}.bot{left:18px;right:18px;bottom:20px;flex-direction:column;align-items:stretch;gap:14px}
-  .bot-right{justify-content:space-between}.frame{inset:10px}.hint{bottom:150px}
+  .bot-right{justify-content:space-between}.frame{inset:10px}.hint{bottom:150px}.scrollbar{display:none}
 }
 @media (prefers-reduced-motion:reduce){.load .ring{animation:none}}
 </style>
@@ -75,7 +77,6 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
 <body>
 <div id="stage"></div>
 <div class="frame"></div>
-<div id="fade"></div>
 
 <div class="ui">
   <div class="top">
@@ -83,7 +84,7 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
       <span class="mk">I</span>
       <span><b>IMPULSE</b><span>Event Zone</span></span>
     </a>
-    <div class="center-title" id="locName">Asosiy Zal<small>360° Virtual Sayr</small></div>
+    <div class="center-title" id="locName">Tashqari<small>360° Virtual Sayr</small></div>
     <nav class="nav">
       <a href="index.html#halls">Zallar</a>
       <a href="index.html#services">Xizmatlar</a>
@@ -91,15 +92,15 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
     </nav>
   </div>
 
-  <div class="hint" id="hint">Sichqonchani suring — atrofga qarang · g'ildirak bilan aylantiring</div>
+  <div class="hint" id="hint">↕ G'ildirak bilan oldinga yuring · sichqonchani surib atrofga qarang</div>
 
   <div class="bot">
     <div class="rooms">
-      <div class="lbl">Makonlar</div>
+      <div class="lbl">Yo'nalish</div>
       <div class="chips" id="chips">
-        <button class="chip" data-i="0"><span class="dot"></span>Tashqari</button>
+        <button class="chip active" data-i="0"><span class="dot"></span>Tashqari</button>
         <button class="chip" data-i="1"><span class="dot"></span>Foye</button>
-        <button class="chip active" data-i="2"><span class="dot"></span>Asosiy Zal</button>
+        <button class="chip" data-i="2"><span class="dot"></span>Asosiy Zal</button>
       </div>
     </div>
     <div class="bot-right">
@@ -109,10 +110,12 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
   </div>
 </div>
 
+<div class="scrollbar"><div class="tick" style="top:0"></div><div class="tick" style="top:50%"></div><div class="tick" style="top:100%"></div><div class="scrollbar-fill" id="sbfill"></div></div>
+
 <div class="intro" id="intro">
   <div class="eyebrow">Impulse Event Zone</div>
   <h1>Haqiqiy zallarimiz bo'ylab <em>360° sayr</em></h1>
-  <p>Asosiy zal, foye va bino tashqarisini xuddi o'sha yerda turgandek aylanib ko'ring. Sichqonchani surib atrofga qarang, pastdagi tugmalar bilan makonlarni almashtiring.</p>
+  <p>Bino tashqarisidan boshlab, <b style="color:var(--gold-lt);font-weight:600">scroll bilan oldinga yuring</b> — foye orqali asosiy zalga kiring. Sichqonchani surib istalgan tomonga qarang.</p>
   <button class="enter" id="enterBtn" disabled>Yuklanmoqda…</button>
   <a class="back" href="index.html">← Asosiy saytga qaytish</a>
 </div>
@@ -127,8 +130,8 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
 import * as THREE from 'three';
 
 const stage = document.getElementById('stage');
-const wait = ms => new Promise(r => setTimeout(r, ms));
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const smooth = t => { t = clamp(t,0,1); return t*t*(3-2*t); };
 
 try {
   const renderer = new THREE.WebGLRenderer({ antialias:true });
@@ -138,82 +141,105 @@ try {
   stage.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 1100);
+  const FOV_BASE = 74;
+  const camera = new THREE.PerspectiveCamera(FOV_BASE, innerWidth/innerHeight, 0.1, 1100);
 
-  // inverted sphere — we view the panorama from inside
+  // two coincident inverted spheres → crossfade A↔B
   const geo = new THREE.SphereGeometry(500, 64, 40);
   geo.scale(-1, 1, 1);
-  const sphere = new THREE.Mesh(geo, new THREE.MeshBasicMaterial());
-  scene.add(sphere);
+  const matA = new THREE.MeshBasicMaterial();
+  const matB = new THREE.MeshBasicMaterial({ transparent:true, opacity:0, depthTest:false, depthWrite:false });
+  const sphereA = new THREE.Mesh(geo, matA); sphereA.renderOrder = 0;
+  const sphereB = new THREE.Mesh(geo, matB); sphereB.renderOrder = 1;
+  scene.add(sphereA, sphereB);
 
-  const loader = new THREE.TextureLoader();
-  const cache = {};
-  function loadTex(url, onProgress){
-    return new Promise((res, rej)=>{
-      if(cache[url]) return res(cache[url]);
-      loader.load(url, t=>{ t.colorSpace = THREE.SRGBColorSpace; cache[url]=t; res(t); }, onProgress, rej);
-    });
-  }
-
+  // journey order: outside → foyer → main hall
   const LOCS = [
-    { name:'Tashqari',   sub:'Bino fasadi',      img:'assets/360/street_web.jpg' },
-    { name:'Foye',       sub:'Kutish zonasi',    img:'assets/360/hall_web.jpg' },
-    { name:'Asosiy Zal', sub:'Konferensiya zali',img:'assets/360/room1_web.jpg' },
+    { name:'Tashqari',   sub:'Bino fasadi',       img:'assets/360/street_web.jpg' },
+    { name:'Foye',       sub:'Kutish zonasi',     img:'assets/360/hall_web.jpg' },
+    { name:'Asosiy Zal', sub:'Konferensiya zali', img:'assets/360/room1_web.jpg' },
   ];
-  let curIdx = 2;                    // start in the main hall
+  const MAXP = LOCS.length - 1;          // 2
+  let tex = [];
+
+  /* progress (0..MAXP) drives the walk; look is separate */
+  let p = 0, targetP = 0;
   let lon = 180, lat = 0, tLon = 180, tLat = 0;
 
   /* ---------- controls ---------- */
   const el = renderer.domElement;
+  // desktop: drag = look, wheel = walk
   let dragging=false, px=0, py=0;
   el.addEventListener('pointerdown', e=>{ dragging=true; px=e.clientX; py=e.clientY; hideHint(); });
   addEventListener('pointerup', ()=> dragging=false);
   addEventListener('pointermove', e=>{
     if(!dragging) return;
-    tLon -= (e.clientX-px)*0.13; tLat += (e.clientY-py)*0.13;
-    tLat = clamp(tLat,-85,85); px=e.clientX; py=e.clientY;
+    tLon -= (e.clientX-px)*0.12; tLat += (e.clientY-py)*0.12;
+    tLat = clamp(tLat,-82,82); px=e.clientX; py=e.clientY;
   });
-  addEventListener('wheel', e=>{ e.preventDefault(); tLon += e.deltaY*0.05; hideHint(); }, { passive:false });
-  // touch
+  addEventListener('wheel', e=>{ e.preventDefault(); targetP = clamp(targetP + e.deltaY*0.0016, 0, MAXP); hideHint(); }, { passive:false });
+  // touch: vertical = walk, horizontal = look
   let txx=0, tyy=0;
   el.addEventListener('touchstart', e=>{ txx=e.touches[0].clientX; tyy=e.touches[0].clientY; hideHint(); }, { passive:true });
   el.addEventListener('touchmove', e=>{
     const t=e.touches[0];
-    tLon -= (t.clientX-txx)*0.16; tLat += (t.clientY-tyy)*0.16;
-    tLat = clamp(tLat,-85,85); txx=t.clientX; tyy=t.clientY;
+    tLon -= (t.clientX-txx)*0.16;
+    targetP = clamp(targetP - (t.clientY-tyy)*0.006, 0, MAXP);
+    txx=t.clientX; tyy=t.clientY;
   }, { passive:true });
+  // keyboard
+  addEventListener('keydown', e=>{
+    if(['ArrowDown','PageDown',' '].includes(e.key)){ targetP=clamp(targetP+0.16,0,MAXP); hideHint(); }
+    if(['ArrowUp','PageUp'].includes(e.key)){ targetP=clamp(targetP-0.16,0,MAXP); hideHint(); }
+  });
 
   /* ---------- UI ---------- */
   const chips = [...document.querySelectorAll('.chip')];
   const locName = document.getElementById('locName');
-  const fadeEl = document.getElementById('fade');
+  const sbfill = document.getElementById('sbfill');
   const hintEl = document.getElementById('hint');
   let hintTimer = setTimeout(hideHint, 9000);
   function hideHint(){ hintEl.classList.add('hide'); clearTimeout(hintTimer); }
+  let lastStop = -1;
   function updateUI(){
-    chips.forEach((c,i)=> c.classList.toggle('active', i===curIdx));
-    locName.innerHTML = LOCS[curIdx].name + '<small>'+LOCS[curIdx].sub+'</small>';
+    const s = Math.round(p);
+    if(s!==lastStop){
+      lastStop = s;
+      chips.forEach((c,i)=> c.classList.toggle('active', i===s));
+      locName.innerHTML = LOCS[s].name + '<small>'+LOCS[s].sub+'</small>';
+    }
+    sbfill.style.height = (4 + (p/MAXP)*96).toFixed(1) + '%';
   }
-  let busy=false;
-  async function go(i){
-    if(busy || i===curIdx) return;
-    busy=true; fadeEl.style.opacity=1; await wait(420);
-    try{ const tex = await loadTex(LOCS[i].img); sphere.material.map = tex; sphere.material.needsUpdate=true; }catch(e){}
-    curIdx=i; tLon=lon=180; tLat=lat=0; updateUI();
-    await wait(80); fadeEl.style.opacity=0; setTimeout(()=>busy=false, 420);
-  }
-  chips.forEach((c,i)=> c.addEventListener('click', ()=>{ go(+c.dataset.i); hideHint(); }));
+  chips.forEach(c=> c.addEventListener('click', ()=>{ targetP = +c.dataset.i; hideHint(); }));
   document.getElementById('fsBtn').addEventListener('click', ()=>{
     if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
     else document.exitFullscreen?.();
   });
 
   /* ---------- animate ---------- */
+  let lastA=-1, lastB=-1;
   function animate(){
     requestAnimationFrame(animate);
+    // smooth walk inertia
+    p += (targetP - p)*0.08;
+    if(Math.abs(targetP-p) < 0.0005) p = targetP;
+
+    const iA = Math.min(Math.floor(p), MAXP);
+    const f  = p - iA;
+    const iB = Math.min(iA+1, MAXP);
+    if(iA!==lastA){ matA.map = tex[iA]; matA.needsUpdate = true; lastA = iA; }
+    if(iB!==lastB){ matB.map = tex[iB]; matB.needsUpdate = true; lastB = iB; }
+    matB.opacity = (iB===iA) ? 0 : smooth((f-0.25)/0.75);   // crossfade in 2nd half
+    // forward "push" — gentle dolly that peaks mid-transition
+    const push = Math.sin(clamp(f,0,1)*Math.PI)*0.18;
+    camera.fov = FOV_BASE/(1+push); camera.updateProjectionMatrix();
+
+    // look
     lon += (tLon-lon)*0.09; lat += (tLat-lat)*0.09;
     const phi = THREE.MathUtils.degToRad(90-lat), theta = THREE.MathUtils.degToRad(lon);
     camera.lookAt(500*Math.sin(phi)*Math.cos(theta), 500*Math.cos(phi), 500*Math.sin(phi)*Math.sin(theta));
+
+    updateUI();
     renderer.render(scene, camera);
   }
 
@@ -222,14 +248,24 @@ try {
     renderer.setSize(innerWidth, innerHeight);
   });
 
-  /* ---------- boot ---------- */
-  const pct = document.getElementById('pct');
-  const firstTex = await loadTex(LOCS[curIdx].img, e=>{
-    if(e.lengthComputable) pct.textContent = Math.round(e.loaded/e.total*100)+'%';
-  });
-  sphere.material.map = firstTex; sphere.material.needsUpdate = true;
+  /* ---------- load all panoramas, then go ---------- */
+  const loader = new THREE.TextureLoader();
+  const pctEl = document.getElementById('pct');
+  function load1(url, baseDone){
+    return new Promise((res,rej)=> loader.load(url,
+      t=>{ t.colorSpace = THREE.SRGBColorSpace; res(t); },
+      e=>{ if(e.lengthComputable) pctEl.textContent = Math.round(((baseDone + e.loaded/e.total)/LOCS.length)*100)+'%'; },
+      rej));
+  }
+  for(let i=0;i<LOCS.length;i++){
+    tex[i] = await load1(LOCS[i].img, i);
+    pctEl.textContent = Math.round(((i+1)/LOCS.length)*100)+'%';
+  }
+  matA.map = tex[0]; matA.needsUpdate = true; lastA = 0;
+  matB.map = tex[1]; matB.needsUpdate = true; lastB = 1;
   updateUI();
   animate();
+
   document.getElementById('load').classList.add('hide');
   const enterBtn = document.getElementById('enterBtn');
   enterBtn.disabled = false; enterBtn.textContent = 'Sayrni boshlash →';
@@ -237,8 +273,6 @@ try {
     document.getElementById('intro').classList.add('hide');
     hintEl.classList.remove('hide'); clearTimeout(hintTimer); hintTimer=setTimeout(hideHint, 8000);
   });
-  // prefetch the other panoramas in the background
-  LOCS.forEach((l,i)=>{ if(i!==curIdx) loadTex(l.img).catch(()=>{}); });
   window.__tourReady = true;
 
 } catch(err){
