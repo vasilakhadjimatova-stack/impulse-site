@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Impulse Event Zone — Virtual Sayr (3D)</title>
+<meta name="description" content="Impulse Event Zone zallari ichida 3D virtual sayr. Hashamatli makonni onlayn aylanib ko'ring.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A96E;--gold-lt:#E8D7B8;--ink:#F3EEE4;--muted:#C9BFAE;--hair:rgba(255,255,255,.20)}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+#stage{position:fixed;inset:0;z-index:0}
+#stage canvas{display:block;width:100%;height:100%}
+.ui{position:fixed;inset:0;z-index:5;pointer-events:none;user-select:none}
+.ui a,.ui button,.chip{pointer-events:auto}
+/* framed border */
+.frame{position:fixed;inset:16px;border:1px solid var(--hair);border-radius:3px;z-index:4;pointer-events:none}
+.frame::before,.frame::after{content:'';position:absolute;width:14px;height:14px;border:1px solid var(--gold);opacity:.8}
+.frame::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+.frame::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+/* top bar */
+.top{position:absolute;top:30px;left:34px;right:34px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .mk{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--gold),#9c7536);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display';font-weight:600;color:#1a1206;font-size:16px;box-shadow:0 4px 14px rgba(201,169,110,.4)}
+.brand b{font-size:14px;font-weight:600;letter-spacing:3px}
+.brand span{display:block;font-size:8px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-top:1px}
+.center-title{font-family:'Playfair Display';font-size:14px;letter-spacing:5px;text-transform:uppercase;color:var(--ink);opacity:.92;text-align:center}
+.nav{display:flex;gap:22px;align-items:center}
+.nav a{color:var(--muted);font-size:12.5px;letter-spacing:1px;text-decoration:none;transition:.25s;text-transform:uppercase}
+.nav a:hover{color:var(--gold-lt)}
+/* bottom bar */
+.bot{position:absolute;bottom:30px;left:34px;right:34px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.rooms{display:flex;flex-direction:column;gap:9px}
+.rooms .lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:rgba(18,14,9,.42);border:1px solid var(--hair);color:var(--ink);font-size:12px;letter-spacing:.5px;padding:8px 15px;border-radius:30px;cursor:pointer;backdrop-filter:blur(8px);transition:.25s;font-family:inherit}
+.chip:hover{border-color:var(--gold);color:var(--gold-lt)}
+.chip.active{background:linear-gradient(135deg,var(--gold),#9c7536);color:#1a1206;border-color:transparent;font-weight:600}
+.bot-right{display:flex;align-items:center;gap:10px}
+.pill{background:rgba(18,14,9,.42);border:1px solid var(--hair);color:var(--ink);font-size:12px;padding:8px 13px;border-radius:30px;backdrop-filter:blur(8px);display:flex;align-items:center;gap:7px;cursor:pointer;transition:.25s}
+.pill:hover{border-color:var(--gold);color:var(--gold-lt)}
+.cta{background:linear-gradient(135deg,var(--gold),#9c7536);color:#1a1206;font-weight:600;font-size:12.5px;padding:10px 18px;border-radius:30px;text-decoration:none;border:0;box-shadow:0 8px 24px rgba(201,169,110,.36);transition:.25s}
+.cta:hover{transform:translateY(-2px)}
+/* hint */
+.hint{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);font-size:11.5px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;opacity:.8;transition:opacity .6s;text-align:center}
+.hint.hide{opacity:0}
+/* intro */
+.intro{position:fixed;inset:0;z-index:8;background:radial-gradient(120% 90% at 50% 40%,rgba(20,15,9,.55),rgba(8,6,4,.9));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;transition:opacity .9s,visibility .9s;padding:24px}
+.intro.hide{opacity:0;visibility:hidden}
+.intro .eyebrow{font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--gold)}
+.intro h1{font-family:'Playfair Display';font-weight:600;font-size:clamp(30px,6vw,58px);line-height:1.1;color:#fff}
+.intro h1 em{font-style:normal;color:var(--gold-lt)}
+.intro p{color:var(--muted);font-size:15px;max-width:440px;font-weight:300}
+.intro .enter{margin-top:10px;background:linear-gradient(135deg,var(--gold),#9c7536);color:#1a1206;font-weight:600;font-size:14px;letter-spacing:1px;padding:14px 34px;border-radius:40px;border:0;cursor:pointer;box-shadow:0 12px 34px rgba(201,169,110,.4);transition:.3s;font-family:inherit}
+.intro .enter:hover{transform:translateY(-3px)}
+.intro .back{color:var(--muted);font-size:12.5px;text-decoration:none;margin-top:4px;letter-spacing:1px}
+.intro .back:hover{color:var(--gold-lt)}
+/* loading */
+.load{position:fixed;inset:0;z-index:10;background:#0c0a07;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .6s,visibility .6s}
+.load.hide{opacity:0;visibility:hidden}
+.load .ring{width:46px;height:46px;border:2px solid rgba(201,169,110,.25);border-top-color:var(--gold);border-radius:50%;animation:sp .8s linear infinite}
+.load .t{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* loop fade */
+#fade{position:fixed;inset:0;z-index:6;background:#0c0a07;opacity:0;pointer-events:none;transition:opacity .55s ease}
+.err{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;text-align:center;padding:30px;background:#0c0a07;color:var(--muted);font-size:15px;line-height:1.7}
+@media(max-width:680px){
+  .nav{display:none}.center-title{font-size:11px;letter-spacing:3px}
+  .top{top:24px;left:24px;right:24px}.bot{left:20px;right:20px;bottom:22px;flex-direction:column;align-items:stretch;gap:14px}
+  .bot-right{justify-content:space-between}.frame{inset:10px}
+}
+@media (prefers-reduced-motion:reduce){.load .ring{animation:none}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div class="frame"></div>
+<div id="fade"></div>
+
+<div class="ui">
+  <div class="top">
+    <a class="brand" href="index.html" style="text-decoration:none">
+      <span class="mk">I</span>
+      <span><b>IMPULSE</b><span>Event Zone</span></span>
+    </a>
+    <div class="center-title">Virtual Galereya</div>
+    <nav class="nav">
+      <a href="index.html#halls">Zallar</a>
+      <a href="index.html#services">Xizmatlar</a>
+      <a href="index.html#contact">Aloqa</a>
+    </nav>
+  </div>
+
+  <div class="hint" id="hint">Sichqonchani suring — atrofga qarang</div>
+
+  <div class="bot">
+    <div class="rooms">
+      <div class="lbl">Makonlar</div>
+      <div class="chips" id="chips">
+        <button class="chip active" data-z="0">Kirish · Lounge</button>
+        <button class="chip" data-z="1">Showroom</button>
+        <button class="chip" data-z="2">Galereya</button>
+      </div>
+    </div>
+    <div class="bot-right">
+      <button class="pill" id="autoBtn">▮▮ Avto sayr</button>
+      <button class="pill" id="fsBtn">⛶ To'liq ekran</button>
+      <a class="cta" href="index.html#contact">Bron qilish</a>
+    </div>
+  </div>
+</div>
+
+<div class="intro" id="intro">
+  <div class="eyebrow">Impulse Event Zone</div>
+  <h1>Zallarimiz ichida <em>virtual sayr</em></h1>
+  <p>Hashamatli makonni xuddi o'sha yerda turgandek aylanib ko'ring. Sichqoncha bilan atrofga qarang, pastdagi tugmalar bilan makonlar bo'ylab harakatlaning.</p>
+  <button class="enter" id="enterBtn">Sayrni boshlash →</button>
+  <a class="back" href="index.html">← Asosiy saytga qaytish</a>
+</div>
+
+<div class="load" id="load"><div class="ring"></div><div class="t">Sahna yuklanmoqda</div></div>
+<div class="err" id="err">Bu qurilma 3D (WebGL) sahnani ko'rsata olmadi.<br>Iltimos, zamonaviy brauzer (Chrome, Safari, Edge) bilan oching.</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const stage = document.getElementById('stage');
+const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+try {
+  /* ---------- renderer / scene / camera ---------- */
+  const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  stage.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x15110b);
+  scene.fog = new THREE.Fog(0x15110b, 14, 58);
+
+  const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 200);
+  camera.position.set(0, 1.6, 16);
+
+  // soft realistic environment lighting + reflections
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  /* ---------- helpers ---------- */
+  const mat = (color, rough=0.85, metal=0.0, extra={}) =>
+    new THREE.MeshStandardMaterial({ color, roughness:rough, metalness:metal, ...extra });
+  function add(geo, m, x,y,z, cast=true, rec=true){
+    const me = new THREE.Mesh(geo, m); me.position.set(x,y,z);
+    me.castShadow = cast; me.receiveShadow = rec; scene.add(me); return me;
+  }
+  const box = (w,h,d,m,x,y,z)=> add(new THREE.BoxGeometry(w,h,d), m, x,y,z);
+  const rbox = (w,h,d,r,m,x,y,z)=> add(new RoundedBoxGeometry(w,h,d,5,r), m, x,y,z);
+
+  const WOOD = mat(0x6f4a2c, 0.62, 0.05);
+  const WOOD_LT = mat(0x9a6a3e, 0.6, 0.05);
+  const WALL = mat(0xd8ccb8, 0.92);
+  const STONE = mat(0xc8bda9, 0.5);
+  const DARK = mat(0x241d15, 0.7);
+  const FAB = mat(0xcabfa8, 0.95);      // upholstery
+  const FAB2 = mat(0xb7a07f, 0.95);
+
+  const HALL_W = 14, HALL_H = 4.6, HALL_L = 56, FZ = 18, BZ = -34;
+
+  /* floor — glossy, reflects environment */
+  add(new THREE.PlaneGeometry(HALL_W, HALL_L),
+      mat(0xcabfae, 0.13, 0.0, { envMapIntensity:1.25 }),
+      0, 0, (FZ+BZ)/2).rotation.x = -Math.PI/2;
+
+  /* ceiling */
+  const ceil = add(new THREE.PlaneGeometry(HALL_W, HALL_L), mat(0x1c160f, 0.9), 0, HALL_H, (FZ+BZ)/2, false, false);
+  ceil.rotation.x = Math.PI/2;
+
+  /* walls */
+  const wallL = add(new THREE.PlaneGeometry(HALL_L, HALL_H), WALL, -HALL_W/2, HALL_H/2, (FZ+BZ)/2);
+  wallL.rotation.y = Math.PI/2;
+  const wallR = add(new THREE.PlaneGeometry(HALL_L, HALL_H), WALL, HALL_W/2, HALL_H/2, (FZ+BZ)/2);
+  wallR.rotation.y = -Math.PI/2;
+  const wallEnd = add(new THREE.PlaneGeometry(HALL_W, HALL_H), WALL, 0, HALL_H/2, BZ);
+  const wallFront = add(new THREE.PlaneGeometry(HALL_W, HALL_H), WALL, 0, HALL_H/2, FZ); wallFront.rotation.y = Math.PI;
+
+  /* emissive ceiling light strips */
+  const strip = new THREE.MeshStandardMaterial({ color:0x2a2218, emissive:0xffd9a0, emissiveIntensity:1.6 });
+  for(let i=0;i<6;i++){
+    const z = FZ - 6 - i*8;
+    box(0.5, 0.08, 5.5, strip, -3.2, HALL_H-0.06, z);
+    box(0.5, 0.08, 5.5, strip,  3.2, HALL_H-0.06, z);
+  }
+
+  /* wood-slat accent wall (showroom, right side) */
+  const slatGroup = new THREE.Group(); scene.add(slatGroup);
+  for(let i=0;i<26;i++){
+    const s = new THREE.Mesh(new THREE.BoxGeometry(0.12, 3.0, 0.12), i%2? WOOD:WOOD_LT);
+    s.position.set(HALL_W/2-0.12, 1.7, 6 - i*0.34);
+    s.castShadow = true; slatGroup.add(s);
+  }
+  // shelves on slat wall
+  for(let i=0;i<3;i++){
+    box(0.3, 0.06, 7, WOOD_LT, HALL_W/2-0.25, 1.0+i*0.9, 2.0);
+  }
+
+  /* canvas-texture artwork */
+  function artTexture(a,b){
+    const c = document.createElement('canvas'); c.width=256; c.height=320;
+    const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0,0,256,320);
+    grad.addColorStop(0,a); grad.addColorStop(1,b);
+    g.fillStyle = grad; g.fillRect(0,0,256,320);
+    g.globalAlpha = 0.5;
+    for(let i=0;i<5;i++){ g.strokeStyle = i%2?'#e8d7b8':'#3a2c1c'; g.lineWidth = 6+i*4;
+      g.beginPath(); g.moveTo(20+i*40, 300); g.bezierCurveTo(60,180-i*20, 200,160+i*15, 236-i*30, 30); g.stroke(); }
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  }
+  function artwork(x,y,z,ry,w,h,a,b){
+    const g = new THREE.Group();
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(w+0.16,h+0.16,0.06), DARK);
+    const canvas = new THREE.Mesh(new THREE.PlaneGeometry(w,h),
+      new THREE.MeshStandardMaterial({ map:artTexture(a,b), roughness:0.6 }));
+    canvas.position.z = 0.04; frame.castShadow = true;
+    g.add(frame, canvas); g.position.set(x,y,z); g.rotation.y = ry; scene.add(g); return g;
+  }
+
+  /* plant */
+  function plant(x,z,s=1){
+    const g = new THREE.Group();
+    g.add(add(new THREE.CylinderGeometry(0.26*s,0.2*s,0.5*s,16), mat(0x3a2c1f,0.8), 0,0.25*s,0));
+    const leafM = mat(0x4f6b3a, 0.7);
+    for(let i=0;i<7;i++){
+      const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.1*s, 1.5*s, 5), leafM);
+      leaf.position.set(0, 1.2*s, 0);
+      leaf.rotation.set((Math.random()*0.5-0.25), i*1.1, (Math.random()*0.7-0.35));
+      leaf.castShadow = true; g.add(leaf);
+    }
+    g.position.set(x,0,z); scene.add(g); return g;
+  }
+
+  /* sofa */
+  function sofa(x,z,ry){
+    const g = new THREE.Group();
+    const base = new THREE.Mesh(new RoundedBoxGeometry(2.4,0.42,1.0,5,0.12), FAB); base.position.set(0,0.46,0); base.castShadow=true; base.receiveShadow=true;
+    const back = new THREE.Mesh(new RoundedBoxGeometry(2.4,0.6,0.26,5,0.1), FAB2); back.position.set(0,0.78,-0.4); back.castShadow=true;
+    const aL = new THREE.Mesh(new RoundedBoxGeometry(0.26,0.55,1.0,5,0.1), FAB2); aL.position.set(-1.18,0.6,0);
+    const aR = aL.clone(); aR.position.x = 1.18;
+    g.add(base,back,aL,aR); g.position.set(x,0,z); g.rotation.y = ry; scene.add(g); return g;
+  }
+
+  /* pendant light */
+  function pendant(x,z){
+    const g = new THREE.Group();
+    g.add(add(new THREE.CylinderGeometry(0.012,0.012,1.1,8), DARK, 0,HALL_H-0.55,0,false,false));
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.13,18,18),
+      new THREE.MeshStandardMaterial({ color:0x2a2218, emissive:0xffcf8c, emissiveIntensity:2.2 }));
+    bulb.position.y = HALL_H-1.1; g.add(bulb);
+    const pl = new THREE.PointLight(0xffd9a0, 6, 9, 2); pl.position.set(0,HALL_H-1.1,0); g.add(pl);
+    g.position.set(x,0,z); scene.add(g); return g;
+  }
+
+  /* ---------- furnish the zones ---------- */
+  // Lounge (front)
+  add(new THREE.PlaneGeometry(6,4.2), mat(0x4a3a2a,0.95), 0,0.02,11).rotation.x = -Math.PI/2; // rug
+  sofa(-1.8,11.4, Math.PI/2);
+  sofa( 1.8,11.4,-Math.PI/2);
+  add(new THREE.CylinderGeometry(0.6,0.6,0.4,28), STONE, 0,0.2,11.2);
+  plant(-4.6,13.5,1.2); plant(4.4,8.5,1.0);
+  pendant(0,11.2);
+
+  // Showroom (mid) — counter island + stools
+  box(3.2,1.0,1.1, WOOD, 2.0,0.5,1.5);
+  box(3.3,0.1,1.2, STONE, 2.0,1.02,1.5);
+  for(let i=0;i<3;i++){ add(new THREE.CylinderGeometry(0.22,0.18,0.62,18), DARK, 0.9+i*1.0,0.31,2.9); }
+  // display objects on shelves
+  for(let i=0;i<3;i++){ add(new THREE.SphereGeometry(0.12,16,16), mat(0xbfae90,0.4), HALL_W/2-0.6, 1.18+i*0.9, 0.5+i); }
+  pendant(2.0,2.0);
+  plant(-5.0,2.0,1.1);
+
+  // Gallery (back) — artworks + pedestals + sculptures
+  artwork(-HALL_W/2+0.12, 1.9, -10, Math.PI/2, 1.6,2.0, '#6b4f33','#211810');
+  artwork(-HALL_W/2+0.12, 1.9, -16, Math.PI/2, 1.6,2.0, '#7a5a36','#2a1d12');
+  artwork(0, 1.9, BZ+0.12, 0, 2.4,2.2, '#8a6a42','#2a1d12');
+  artwork(HALL_W/2-0.12, 1.9, -12, -Math.PI/2, 1.6,2.0, '#5e4630','#1d150e');
+  box(0.7,1.0,0.7, STONE, -3.2,0.5,-13);
+  add(new THREE.IcosahedronGeometry(0.32,0), mat(0xc7b48f,0.3,0.2), -3.2,1.22,-13);
+  box(0.7,1.0,0.7, STONE, 3.0,0.5,-15);
+  add(new THREE.TorusKnotGeometry(0.26,0.09,80,16), mat(0xbfae90,0.35,0.2), 3.0,1.3,-15);
+  pendant(0,-12); pendant(0,-20);
+  plant(-5.2,-18,1.2); plant(4.8,-22,1.1);
+
+  /* ---------- dramatic lights ---------- */
+  scene.add(new THREE.HemisphereLight(0xfff1da, 0x2a2018, 0.55));
+  const key = new THREE.DirectionalLight(0xffe6c0, 0.7);
+  key.position.set(6,12,14); key.castShadow = true;
+  key.shadow.mapSize.set(2048,2048);
+  const sc = key.shadow.camera; sc.left=-12; sc.right=12; sc.top=20; sc.bottom=-40; sc.near=1; sc.far=70;
+  key.shadow.bias = -0.0004; scene.add(key);
+
+  function spot(x,y,z, tx,ty,tz, intensity=4){
+    const sp = new THREE.SpotLight(0xffdba6, intensity, 0, Math.PI/7, 0.55, 0);
+    sp.position.set(x,y,z); sp.target.position.set(tx,ty,tz);
+    scene.add(sp); scene.add(sp.target); return sp;
+  }
+  spot(-3, HALL_H-0.3, -10, -HALL_W/2, 1.9, -10, 5);
+  spot( 3, HALL_H-0.3, -12,  HALL_W/2, 1.9, -12, 5);
+  spot( 0, HALL_H-0.3, -2, 2.0, 1.0, 1.5, 4);
+  spot( 0, HALL_H-0.3, 11, 0, 0.6, 11, 3.5);
+
+  /* ---------- camera tour ---------- */
+  const posPts = [
+    new THREE.Vector3(0,1.6,15),
+    new THREE.Vector3(-1.6,1.6,9.5),
+    new THREE.Vector3(1.4,1.55,3.5),
+    new THREE.Vector3(-1.2,1.6,-3),
+    new THREE.Vector3(1.0,1.6,-10),
+    new THREE.Vector3(-0.6,1.55,-18),
+    new THREE.Vector3(0,1.6,-26),
+  ];
+  const tgtPts = [
+    new THREE.Vector3(0,1.5,9),
+    new THREE.Vector3(1.2,1.4,4),
+    new THREE.Vector3(3.0,1.2,1.5),
+    new THREE.Vector3(-3.0,1.5,-8),
+    new THREE.Vector3(2.5,1.6,-13),
+    new THREE.Vector3(-2.0,1.5,-20),
+    new THREE.Vector3(0,1.5,BZ),
+  ];
+  const posCurve = new THREE.CatmullRomCurve3(posPts, false, 'catmullrom', 0.4);
+  const tgtCurve = new THREE.CatmullRomCurve3(tgtPts, false, 'catmullrom', 0.4);
+  const ZONES = [0.02, 0.42, 0.78]; // lounge / showroom / gallery
+
+  let prog = 0.02, auto = !reduce, dir = 1;
+  const DUR = 46; // seconds for a full pass
+  const _p = new THREE.Vector3(), _t = new THREE.Vector3();
+
+  /* pointer parallax look */
+  const look = { x:0, y:0, tx:0, ty:0 };
+  addEventListener('pointermove', e=>{
+    look.tx = (e.clientX/innerWidth - 0.5) * 2;
+    look.ty = (e.clientY/innerHeight - 0.5) * 2;
+  });
+  let dragging=false, lastX=0, dragYaw=0, dragYawT=0;
+  addEventListener('pointerdown', e=>{ dragging=true; lastX=e.clientX; hideHint(); });
+  addEventListener('pointerup', ()=> dragging=false);
+  addEventListener('pointermove', e=>{ if(dragging){ dragYawT += (e.clientX-lastX)*0.0016; lastX=e.clientX; dragYawT=Math.max(-0.6,Math.min(0.6,dragYawT)); }});
+
+  /* ---------- UI wiring ---------- */
+  const chips = [...document.querySelectorAll('.chip')];
+  chips.forEach(c=> c.addEventListener('click', ()=>{
+    chips.forEach(x=>x.classList.remove('active')); c.classList.add('active');
+    const z = +c.dataset.z; gotoProg = ZONES[z]; auto=false; setAutoLabel(); hideHint();
+  }));
+  let gotoProg = null;
+  const autoBtn = document.getElementById('autoBtn');
+  function setAutoLabel(){ autoBtn.textContent = auto ? '▮▮ Avto sayr' : '▶ Avto sayr'; }
+  autoBtn.addEventListener('click', ()=>{ auto=!auto; setAutoLabel(); hideHint(); });
+  document.getElementById('fsBtn').addEventListener('click', ()=>{
+    if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  });
+  const hintEl = document.getElementById('hint');
+  let hintTimer = setTimeout(hideHint, 6000);
+  function hideHint(){ hintEl.classList.add('hide'); clearTimeout(hintTimer); }
+
+  function syncChip(){
+    let near=0, best=1e9;
+    ZONES.forEach((z,i)=>{ const d=Math.abs(z-prog); if(d<best){best=d;near=i;} });
+    chips.forEach((c,i)=> c.classList.toggle('active', i===near));
+  }
+
+  /* ---------- loop fade for seamless restart ---------- */
+  const fade = document.getElementById('fade');
+  let fading=false;
+
+  /* ---------- animate ---------- */
+  let last = performance.now();
+  function frame(now){
+    const dt = Math.min((now-last)/1000, 0.05); last = now;
+
+    if(gotoProg!==null){
+      prog += (gotoProg - prog) * Math.min(dt*3, 1);
+      if(Math.abs(gotoProg-prog) < 0.003){ prog=gotoProg; gotoProg=null; }
+    } else if(auto){
+      prog += (dt/DUR)*dir;
+      if(prog >= 1 && !fading){ fading=true; fade.style.opacity=1;
+        setTimeout(()=>{ prog=0.02; fade.style.opacity=0; setTimeout(()=>fading=false,550); }, 560); }
+    }
+    prog = Math.max(0, Math.min(1, prog));
+
+    posCurve.getPointAt(prog, _p);
+    tgtCurve.getPointAt(prog, _t);
+
+    // smooth pointer parallax + drag yaw
+    look.x += (look.tx - look.x)*Math.min(dt*3,1);
+    look.y += (look.ty - look.y)*Math.min(dt*3,1);
+    dragYaw += (dragYawT - dragYaw)*Math.min(dt*4,1);
+    dragYawT *= 0.96;
+
+    camera.position.copy(_p);
+    camera.position.y += Math.sin(now*0.0006)*0.04; // gentle breathing
+    const tgt = _t.clone();
+    tgt.x += look.x*2.2 + dragYaw*8;
+    tgt.y += -look.y*1.1;
+    camera.lookAt(tgt);
+
+    syncChip();
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- resize ---------- */
+  addEventListener('resize', ()=>{
+    camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+
+  /* ---------- boot ---------- */
+  renderer.render(scene, camera); // warm up
+  requestAnimationFrame(frame);
+  document.getElementById('load').classList.add('hide');
+  document.getElementById('enterBtn').addEventListener('click', ()=>{
+    document.getElementById('intro').classList.add('hide'); auto = !reduce; setAutoLabel();
+  });
+  // also let clicking anywhere dismiss intro
+  setAutoLabel();
+  window.__tourReady = true;
+
+} catch(err){
+  console.error('TOUR ERROR', err);
+  document.getElementById('load')?.classList.add('hide');
+  const e = document.getElementById('err'); if(e) e.style.display='flex';
+  window.__tourError = String(err);
+}
+</script>
+</body>
+</html>
