@@ -91,11 +91,17 @@ header.scrolled::after{content:'';position:absolute;left:0;right:0;bottom:0;heig
 .about-badge b{font-family:'Playfair Display';font-size:26px;color:var(--gold)}
 .about-badge span{display:block;font-size:12px;color:#C8D2E0;letter-spacing:1px}
 
-.clients{background:var(--navy2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:34px 0}
-.clients p{text-align:center;color:var(--muted);font-size:12.5px;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px}
-.clients-row{display:flex;align-items:center;justify-content:center;gap:46px;flex-wrap:wrap}
-.client-logo{font-family:'Playfair Display';font-size:22px;font-weight:600;color:#8E9AAE;letter-spacing:.5px;opacity:.8;transition:.3s}
-.client-logo:hover{color:var(--gold-lt);opacity:1}
+.clients{background:var(--navy2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:36px 0}
+.clients p{text-align:center;color:var(--muted);font-size:12.5px;letter-spacing:3px;text-transform:uppercase;margin-bottom:26px}
+.marquee{position:relative;overflow:hidden;-webkit-mask:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.marquee-track{display:flex;width:max-content;animation:marq 36s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-group{display:flex;align-items:center;gap:62px;padding-left:62px}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.client-logo{flex:0 0 auto;height:32px;display:flex;align-items:center;color:#9AA7BB;opacity:.72;transition:color .3s,opacity .3s,filter .3s}
+.client-logo svg{height:32px;width:auto;display:block}
+.client-logo:hover{color:var(--gold-lt);opacity:1;filter:drop-shadow(0 4px 12px rgba(201,169,110,.28))}
+@media(prefers-reduced-motion:reduce){.marquee{-webkit-mask:none;mask:none}.marquee-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center;gap:40px}.marquee-group{padding-left:0;flex-wrap:wrap;justify-content:center;gap:40px}.marquee-group+.marquee-group{display:none}}
 
 .halls{background:var(--navy2)}
 .hall-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}
@@ -194,7 +200,7 @@ footer{background:var(--navy);padding:64px 0 28px}
   .hall-grid,.about-feats{grid-template-columns:1fr}
   .serv-grid,.stats-grid,.proc-grid,.testi-grid{grid-template-columns:1fr 1fr}
   .gal-grid{grid-template-columns:1fr 1fr}.gal-grid a{height:160px!important;grid-row:auto!important}
-  .foot-grid{grid-template-columns:1fr 1fr}.clients-row{gap:28px}.client-logo{font-size:17px}
+  .foot-grid{grid-template-columns:1fr 1fr}
   .menu.open{display:flex;position:absolute;top:62px;left:0;right:0;flex-direction:column;background:rgba(10,15,31,.98);padding:20px 24px;gap:18px;border-bottom:1px solid var(--line)}
 }
 @media(max-width:520px){.stats-grid,.serv-grid,.proc-grid,.testi-grid,.gal-grid,.foot-grid{grid-template-columns:1fr}}
@@ -263,10 +269,25 @@ footer{background:var(--navy);padding:64px 0 28px}
 </section>
 
 <section class="clients">
-  <div class="wrap">
-    <p>Bizga ishonadiganlar</p>
-    <div class="clients-row">
-      <span class="client-logo">Hamkorbank</span><span class="client-logo">Uzcard</span><span class="client-logo">Artel</span><span class="client-logo">Akfa</span><span class="client-logo">EPAM</span><span class="client-logo">Beeline</span>
+  <div class="wrap"><p>Bizga ishonadiganlar</p></div>
+  <div class="marquee">
+    <div class="marquee-track">
+      <div class="marquee-group">
+        <span class="client-logo" role="img" aria-label="Hamkorbank" title="Hamkorbank"><svg viewBox="0 0 176 40" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M9.5 6.2c7.4.9 12.9 6.4 13.8 13.8-.2-.1-7.7-.6-11.4-4.3C8.2 12 9.4 6.8 9.5 6.2Z"/><text x="28" y="27" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="-0.5" fill="currentColor">hamkorbank</text></svg></span>
+        <span class="client-logo" role="img" aria-label="Uzcard" title="Uzcard"><svg viewBox="0 0 112 40" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><text x="56" y="29" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="27" letter-spacing="-0.5" fill="currentColor">uzcard</text></svg></span>
+        <span class="client-logo" role="img" aria-label="Artel" title="Artel"><svg viewBox="0 0 110 40" xmlns="http://www.w3.org/2000/svg"><text x="8" y="27" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="30" letter-spacing="-1" fill="currentColor">artel</text></svg></span>
+        <span class="client-logo" role="img" aria-label="Akfa" title="Akfa"><svg viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg"><text x="70" y="29" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="27" letter-spacing="2" fill="currentColor">AKFA</text></svg></span>
+        <span class="client-logo" role="img" aria-label="EPAM" title="EPAM"><svg viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg"><text x="75" y="28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" letter-spacing="1" fill="currentColor">EPAM</text></svg></span>
+        <span class="client-logo" role="img" aria-label="Beeline" title="Beeline"><svg viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><mask id="bln-stripes"><circle cx="20" cy="20" r="15" fill="white"/><rect x="3" y="8.7" width="34" height="2.6" fill="black"/><rect x="3" y="13.7" width="34" height="2.6" fill="black"/><rect x="3" y="18.7" width="34" height="2.6" fill="black"/><rect x="3" y="23.7" width="34" height="2.6" fill="black"/><rect x="3" y="28.7" width="34" height="2.6" fill="black"/></mask><circle cx="20" cy="20" r="15" mask="url(#bln-stripes)"/><text x="41" y="28" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="23" letter-spacing="-0.8">beeline</text></svg></span>
+      </div>
+      <div class="marquee-group" aria-hidden="true">
+        <span class="client-logo"><svg viewBox="0 0 176 40" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M9.5 6.2c7.4.9 12.9 6.4 13.8 13.8-.2-.1-7.7-.6-11.4-4.3C8.2 12 9.4 6.8 9.5 6.2Z"/><text x="28" y="27" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="-0.5" fill="currentColor">hamkorbank</text></svg></span>
+        <span class="client-logo"><svg viewBox="0 0 112 40" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><text x="56" y="29" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="27" letter-spacing="-0.5" fill="currentColor">uzcard</text></svg></span>
+        <span class="client-logo"><svg viewBox="0 0 110 40" xmlns="http://www.w3.org/2000/svg"><text x="8" y="27" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="30" letter-spacing="-1" fill="currentColor">artel</text></svg></span>
+        <span class="client-logo"><svg viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg"><text x="70" y="29" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="27" letter-spacing="2" fill="currentColor">AKFA</text></svg></span>
+        <span class="client-logo"><svg viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg"><text x="75" y="28" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" letter-spacing="1" fill="currentColor">EPAM</text></svg></span>
+        <span class="client-logo"><svg viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><mask id="bln-stripes-2"><circle cx="20" cy="20" r="15" fill="white"/><rect x="3" y="8.7" width="34" height="2.6" fill="black"/><rect x="3" y="13.7" width="34" height="2.6" fill="black"/><rect x="3" y="18.7" width="34" height="2.6" fill="black"/><rect x="3" y="23.7" width="34" height="2.6" fill="black"/><rect x="3" y="28.7" width="34" height="2.6" fill="black"/></mask><circle cx="20" cy="20" r="15" mask="url(#bln-stripes-2)"/><text x="41" y="28" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="23" letter-spacing="-0.8">beeline</text></svg></span>
+      </div>
     </div>
   </div>
 </section>
