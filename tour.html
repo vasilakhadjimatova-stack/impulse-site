@@ -47,6 +47,9 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
 /* hint */
 .hint{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);font-size:11.5px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;opacity:.8;transition:opacity .6s;text-align:center}
 .hint.hide{opacity:0}
+.scrollbar{position:fixed;right:26px;top:50%;transform:translateY(-50%);width:3px;height:170px;background:rgba(255,255,255,.12);border-radius:3px;z-index:5;pointer-events:none}
+.scrollbar-fill{position:absolute;left:0;top:0;width:100%;height:8%;background:linear-gradient(var(--gold),var(--gold-lt));border-radius:3px}
+@media(max-width:680px){.scrollbar{display:none}}
 /* intro */
 .intro{position:fixed;inset:0;z-index:8;background:radial-gradient(120% 90% at 50% 40%,rgba(20,15,9,.55),rgba(8,6,4,.9));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;transition:opacity .9s,visibility .9s;padding:24px}
 .intro.hide{opacity:0;visibility:hidden}
@@ -79,6 +82,7 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
 <div id="stage"></div>
 <div class="frame"></div>
 <div id="fade"></div>
+<div class="scrollbar"><div class="scrollbar-fill" id="sbfill"></div></div>
 
 <div class="ui">
   <div class="top">
@@ -94,7 +98,7 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
     </nav>
   </div>
 
-  <div class="hint" id="hint">Sichqonchani suring — atrofga qarang</div>
+  <div class="hint" id="hint">↕ Scroll qiling — makon bo'ylab silliq harakatlaning</div>
 
   <div class="bot">
     <div class="rooms">
@@ -106,7 +110,6 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
       </div>
     </div>
     <div class="bot-right">
-      <button class="pill" id="autoBtn">▮▮ Avto sayr</button>
       <button class="pill" id="fsBtn">⛶ To'liq ekran</button>
       <a class="cta" href="index.html#contact">Bron qilish</a>
     </div>
@@ -116,7 +119,7 @@ html,body{height:100%;overflow:hidden;background:#0c0a07;font-family:'Inter',sys
 <div class="intro" id="intro">
   <div class="eyebrow">Impulse Event Zone</div>
   <h1>Zallarimiz ichida <em>virtual sayr</em></h1>
-  <p>Hashamatli makonni xuddi o'sha yerda turgandek aylanib ko'ring. Sichqoncha bilan atrofga qarang, pastdagi tugmalar bilan makonlar bo'ylab harakatlaning.</p>
+  <p>Hashamatli makonni xuddi o'sha yerda turgandek aylanib ko'ring. <b style="color:var(--gold-lt);font-weight:600">Sichqoncha g'ildiragi bilan (scroll)</b> oldinga-orqaga silliq harakatlaning, sichqonchani surib atrofga qarang.</p>
   <button class="enter" id="enterBtn">Sayrni boshlash →</button>
   <a class="back" href="index.html">← Asosiy saytga qaytish</a>
 </div>
@@ -345,38 +348,45 @@ try {
   const tgtCurve = new THREE.CatmullRomCurve3(tgtPts, false, 'catmullrom', 0.4);
   const ZONES = [0.02, 0.42, 0.78]; // lounge / showroom / gallery
 
-  let prog = 0.02, auto = !reduce, dir = 1;
-  const DUR = 46; // seconds for a full pass
+  const clamp01 = v => Math.max(0, Math.min(1, v));
+  let prog = 0.02, targetProg = 0.02;
   const _p = new THREE.Vector3(), _t = new THREE.Vector3();
 
-  /* pointer parallax look */
+  /* pointer parallax look (subtle, mouse-driven) */
   const look = { x:0, y:0, tx:0, ty:0 };
   addEventListener('pointermove', e=>{
     look.tx = (e.clientX/innerWidth - 0.5) * 2;
     look.ty = (e.clientY/innerHeight - 0.5) * 2;
   });
-  let dragging=false, lastX=0, dragYaw=0, dragYawT=0;
-  addEventListener('pointerdown', e=>{ dragging=true; lastX=e.clientX; hideHint(); });
-  addEventListener('pointerup', ()=> dragging=false);
-  addEventListener('pointermove', e=>{ if(dragging){ dragYawT += (e.clientX-lastX)*0.0016; lastX=e.clientX; dragYawT=Math.max(-0.6,Math.min(0.6,dragYawT)); }});
+
+  /* SCROLL = makon bo'ylab silliq harakat (avto emas) */
+  const SCROLL_K = 0.00042;
+  addEventListener('wheel', e=>{ e.preventDefault(); targetProg = clamp01(targetProg + e.deltaY*SCROLL_K); hideHint(); }, { passive:false });
+  // mobil: vertikal surish
+  let touchY = null;
+  addEventListener('touchstart', e=>{ touchY = e.touches[0].clientY; }, { passive:true });
+  addEventListener('touchmove', e=>{ if(touchY!==null){ const dy = touchY - e.touches[0].clientY; targetProg = clamp01(targetProg + dy*0.0011); touchY = e.touches[0].clientY; hideHint(); } }, { passive:true });
+  addEventListener('touchend', ()=> touchY=null);
+  // klaviatura
+  addEventListener('keydown', e=>{
+    if(['ArrowDown','PageDown',' '].includes(e.key)){ targetProg = clamp01(targetProg+0.05); hideHint(); }
+    if(['ArrowUp','PageUp'].includes(e.key)){ targetProg = clamp01(targetProg-0.05); hideHint(); }
+  });
 
   /* ---------- UI wiring ---------- */
   const chips = [...document.querySelectorAll('.chip')];
   chips.forEach(c=> c.addEventListener('click', ()=>{
     chips.forEach(x=>x.classList.remove('active')); c.classList.add('active');
-    const z = +c.dataset.z; gotoProg = ZONES[z]; auto=false; setAutoLabel(); hideHint();
+    targetProg = ZONES[+c.dataset.z]; hideHint();
   }));
-  let gotoProg = null;
-  const autoBtn = document.getElementById('autoBtn');
-  function setAutoLabel(){ autoBtn.textContent = auto ? '▮▮ Avto sayr' : '▶ Avto sayr'; }
-  autoBtn.addEventListener('click', ()=>{ auto=!auto; setAutoLabel(); hideHint(); });
   document.getElementById('fsBtn').addEventListener('click', ()=>{
     if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
     else document.exitFullscreen?.();
   });
   const hintEl = document.getElementById('hint');
-  let hintTimer = setTimeout(hideHint, 6000);
+  let hintTimer = setTimeout(hideHint, 8000);
   function hideHint(){ hintEl.classList.add('hide'); clearTimeout(hintTimer); }
+  const sbfill = document.getElementById('sbfill');
 
   function syncChip(){
     let near=0, best=1e9;
@@ -384,41 +394,30 @@ try {
     chips.forEach((c,i)=> c.classList.toggle('active', i===near));
   }
 
-  /* ---------- loop fade for seamless restart ---------- */
-  const fade = document.getElementById('fade');
-  let fading=false;
-
   /* ---------- animate ---------- */
   let last = performance.now();
   function frame(now){
     const dt = Math.min((now-last)/1000, 0.05); last = now;
 
-    if(gotoProg!==null){
-      prog += (gotoProg - prog) * Math.min(dt*3, 1);
-      if(Math.abs(gotoProg-prog) < 0.003){ prog=gotoProg; gotoProg=null; }
-    } else if(auto){
-      prog += (dt/DUR)*dir;
-      if(prog >= 1 && !fading){ fading=true; fade.style.opacity=1;
-        setTimeout(()=>{ prog=0.02; fade.style.opacity=0; setTimeout(()=>fading=false,550); }, 560); }
-    }
-    prog = Math.max(0, Math.min(1, prog));
+    // scroll-target sari silliq glide — kino kabi inertiya
+    prog += (targetProg - prog) * Math.min(dt*3.0, 1);
+    if(Math.abs(targetProg - prog) < 0.0002) prog = targetProg;
+    prog = clamp01(prog);
 
     posCurve.getPointAt(prog, _p);
     tgtCurve.getPointAt(prog, _t);
 
-    // smooth pointer parallax + drag yaw
+    // subtle mouse-driven look
     look.x += (look.tx - look.x)*Math.min(dt*3,1);
     look.y += (look.ty - look.y)*Math.min(dt*3,1);
-    dragYaw += (dragYawT - dragYaw)*Math.min(dt*4,1);
-    dragYawT *= 0.96;
 
     camera.position.copy(_p);
-    camera.position.y += Math.sin(now*0.0006)*0.04; // gentle breathing
     const tgt = _t.clone();
-    tgt.x += look.x*2.2 + dragYaw*8;
-    tgt.y += -look.y*1.1;
+    tgt.x += look.x*2.0;
+    tgt.y += -look.y*1.0;
     camera.lookAt(tgt);
 
+    if(sbfill) sbfill.style.height = (8 + prog*92).toFixed(1) + '%';
     syncChip();
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
@@ -435,10 +434,9 @@ try {
   requestAnimationFrame(frame);
   document.getElementById('load').classList.add('hide');
   document.getElementById('enterBtn').addEventListener('click', ()=>{
-    document.getElementById('intro').classList.add('hide'); auto = !reduce; setAutoLabel();
+    document.getElementById('intro').classList.add('hide');
+    hintEl.classList.remove('hide'); clearTimeout(hintTimer); hintTimer = setTimeout(hideHint, 7000);
   });
-  // also let clicking anywhere dismiss intro
-  setAutoLabel();
   window.__tourReady = true;
 
 } catch(err){
