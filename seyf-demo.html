@@ -53,6 +53,19 @@
   .lgd{width:42px;height:42px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
     border:1px solid var(--ln);background:var(--inset)}
   .lgd .d{width:14px;height:14px;border-radius:50%}
+  .pgrid{display:grid;gap:11px;margin-bottom:4px}
+  .pcard{border:1px solid var(--ln);border-radius:16px;padding:15px 14px;cursor:pointer;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0))}
+  .pcard::before{content:"";position:absolute;left:0;top:0;height:100%;width:3px;background:var(--pcol,var(--gold));opacity:.85}
+  .pcard:active{border-color:var(--ln2)}
+  .pcard .lgb{width:56px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--ln2);
+    display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .pcard .lgb img{width:100%;height:100%;object-fit:contain;padding:6px}
+  .pcard .lgbd{width:56px;height:56px;border-radius:14px;border:1px solid var(--ln);background:var(--inset);display:flex;align-items:center;justify-content:center}
+  .pcard .nm{font-weight:500;font-size:14.5px;margin-top:12px}
+  .pcard .b1{font-family:var(--mono);font-weight:600;font-size:14px;color:var(--goldl);margin-top:10px;
+    font-variant-numeric:tabular-nums;letter-spacing:-.2px;white-space:nowrap}
+  .pcard .b2{font-family:var(--mono);font-size:12px;color:var(--tx3);margin-top:3px}
   .pc .nm{font-weight:500}
   .pc .bal{margin-left:auto;text-align:right;font-family:var(--mono);font-size:12px;color:var(--tx)}
   .op{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--ln)}
@@ -160,12 +173,14 @@
     var h='<div class="row2" style="margin-bottom:6px"><div class="mc"><div class="l">Jami — so\'m</div><div class="v">'+grp(tu)+'</div></div>'+
       '<div class="mc"><div class="l">Jami — dollar</div><div class="v">$'+grp(td)+'</div></div></div>';
     h+='<div class="sl">Loyihalar</div>';
+    var cols=vis.length===1?'1fr':'1fr 1fr';
+    h+='<div class="pgrid" style="grid-template-columns:'+cols+'">';
     vis.forEach(function(p){
-      var chip=p.logo?('<span class="lg"><img src="'+p.logo+'" alt=""></span>')
-        :('<span class="lgd"><span class="d" style="background:'+p.color+';box-shadow:0 0 9px '+p.color+'"></span></span>');
-      h+='<div class="pc" onclick="seyfProj(\''+p.code+'\')">'+chip+
-      '<span class="nm">'+esc(p.name)+'</span><span class="bal">'+grp(p.UZS)+'<br><span class="muted">$'+grp(p.USD)+'</span></span>'+
-      '<span style="color:var(--lblg);font-size:18px">&rsaquo;</span></div>';});
+      var chip=p.logo?('<span class="lgb"><img src="'+p.logo+'" alt=""></span>')
+        :('<span class="lgbd"><span class="d" style="width:18px;height:18px;border-radius:50%;background:'+p.color+';box-shadow:0 0 11px '+p.color+'"></span></span>');
+      h+='<div class="pcard" style="--pcol:'+p.color+'" onclick="seyfProj(\''+p.code+'\')">'+chip+
+        '<div class="nm">'+esc(p.name)+'</div><div class="b1">'+grp(p.UZS)+'</div><div class="b2">$'+grp(p.USD)+'</div></div>';});
+    h+='</div>';
     if(canWrite())h+='<button class="pbtn" onclick="seyfGo(\'new\')" style="margin-top:8px">+ Yangi amal</button>';
     h+='<div class="sl">So\'nggi amallar</div>';
     var rec=OPS.filter(opVisible).slice(0,8);
