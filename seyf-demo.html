@@ -132,6 +132,12 @@
   .dq-arrow{color:var(--tx3);flex:0 0 auto}
   .dq-sub{font-size:11.5px;color:var(--tx3);margin-top:3px}
   .dq-amt{margin-left:auto;font-family:var(--mono);font-weight:600;color:var(--tx);white-space:nowrap;font-size:12.5px;text-align:right;flex:0 0 auto}
+  .chbox{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:13px 14px 10px;margin-bottom:12px}
+  .chttl{font-size:11px;color:var(--lblg);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+  .chwrap{position:relative;width:100%}
+  .donut-c{position:absolute;top:42%;left:0;right:0;transform:translateY(-50%);text-align:center;pointer-events:none}
+  .donut-c .v{font-family:var(--mono);font-weight:600;font-size:18px;color:var(--goldl)}
+  .donut-c .l{font-size:10.5px;color:var(--tx3);margin-top:2px}
   .ai-wrap{text-align:center;padding:6px 0}
   .ai-orb{position:relative;width:128px;height:128px;margin:16px auto 8px;cursor:pointer}
   .ai-orb .core{position:absolute;inset:38px;border-radius:50%;z-index:2;display:flex;align-items:center;justify-content:center;
@@ -402,6 +408,7 @@
     </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 (function(){
   var P=[
@@ -563,17 +570,29 @@
     h+='<div class="dq-legend"><span class="g">●</span> <b style="color:var(--gr)">oladi (haqdor)</b> — boshqalar shu loyihaga qarzdor<br>'+
        '<span class="r">●</span> <b style="color:var(--rd)">beradi (qarzdor)</b> — shu loyiha boshqalarga qarzdor</div>';
     var rows=Object.keys(netU).map(function(c){return {c:c,n:netU[c]};}).filter(function(x){return x.n!==0;}).sort(function(a,b){return b.n-a.n;});
-    var max=1;rows.forEach(function(x){max=Math.max(max,Math.abs(x.n));});
+    var uLoans=loans.filter(function(o){return o.cur==='UZS';});
+    var hasC=!!window.Chart;
     if(rows.length){
-      h+='<div class="sl">Har loyiha bo\'yicha — so\'m</div>';
-      rows.forEach(function(x){
-        var pos=x.n>0;var col=pos?'var(--gr)':'var(--rd)';var w=Math.max(6,Math.round(100*Math.abs(x.n)/max));
-        h+='<div class="dq-stat" style="border-left-color:'+col+'">'+
-          '<div class="dq-stat-top"><span class="dq-stat-name">'+esc((P_(x.c)||{}).name||x.c)+'</span>'+
-          '<span class="dq-stat-net" style="color:'+col+'">'+(pos?'+':'−')+grp(Math.abs(x.n))+'</span></div>'+
-          '<div class="dq-bar"><i style="width:'+w+'%;background:'+col+'"></i></div>'+
-          '<div class="dq-tag" style="color:'+col+'">'+(pos?'jami OLADI — haqdor':'jami BERADI — qarzdor')+'</div></div>';
-      });
+      h+='<div class="sl">Loyihalar holati — sof qarz (so\'m)</div>';
+      if(hasC){
+        h+='<div class="chbox"><div class="chttl">Kim haqdor (yashil) · kim qarzdor (qizil)</div>'+
+           '<div class="chwrap" style="height:'+(rows.length*40+22)+'px"><canvas id="cNet"></canvas></div></div>';
+      }else{
+        var max=1;rows.forEach(function(x){max=Math.max(max,Math.abs(x.n));});
+        rows.forEach(function(x){
+          var pos=x.n>0;var col=pos?'var(--gr)':'var(--rd)';var w=Math.max(6,Math.round(100*Math.abs(x.n)/max));
+          h+='<div class="dq-stat" style="border-left-color:'+col+'"><div class="dq-stat-top">'+
+            '<span class="dq-stat-name">'+esc((P_(x.c)||{}).name||x.c)+'</span>'+
+            '<span class="dq-stat-net" style="color:'+col+'">'+(pos?'+':'−')+grp(Math.abs(x.n))+'</span></div>'+
+            '<div class="dq-bar"><i style="width:'+w+'%;background:'+col+'"></i></div>'+
+            '<div class="dq-tag" style="color:'+col+'">'+(pos?'jami OLADI — haqdor':'jami BERADI — qarzdor')+'</div></div>';
+        });
+      }
+    }
+    if(hasC&&uLoans.length){
+      h+='<div class="sl">Qarz tarkibi — so\'m</div>'+
+         '<div class="chbox"><div class="chwrap" style="height:248px"><canvas id="cPie"></canvas>'+
+         '<div class="donut-c"><div class="v">'+grp(sumU)+'</div><div class="l">jami, so\'m</div></div></div></div>';
     }
     h+='<div class="sl">Kim kimga qarzdor</div>';
     h+='<div class="dq-legend" style="margin-top:-4px"><b style="color:var(--rd)">Chapdagi</b> — qarzdor loyiha · <b style="color:var(--goldl)">o\'ngdagi</b> — pulni oladi · summa = qarz miqdori</div>';
@@ -588,6 +607,39 @@
         '<span class="dq-amt">'+fmt(o.cur,o.amt)+'</span></div>';
     });
     $('view').innerHTML=h;
+    drawDebtCharts(rows,uLoans);
+  }
+
+  function drawDebtCharts(rows,uLoans){
+    if(!window.Chart)return;
+    try{
+      Chart.defaults.color='#9AA3B8';Chart.defaults.font.family='Inter, sans-serif';
+      var som=function(n){var a=Math.abs(n);if(a>=1e9)return (n/1e9).toFixed(1)+' mlrd';if(a>=1e6)return Math.round(n/1e6)+' mln';if(a>=1e3)return Math.round(n/1e3)+' ming';return ''+n;};
+      var TT={backgroundColor:'#161922',borderColor:'rgba(255,255,255,.1)',borderWidth:1,padding:10,titleColor:'#F4F5F9',bodyColor:'#D6DBE6'};
+      if(window._chN){window._chN.destroy();window._chN=null;}
+      if(window._chP){window._chP.destroy();window._chP=null;}
+      var cN=document.getElementById('cNet');
+      if(cN&&rows&&rows.length){
+        window._chN=new Chart(cN,{type:'bar',
+          data:{labels:rows.map(function(x){return (P_(x.c)||{}).name||x.c;}),
+            datasets:[{data:rows.map(function(x){return x.n;}),
+              backgroundColor:rows.map(function(x){return x.n>=0?'#5BD68B':'#F2807A';}),borderRadius:5,barThickness:18}]},
+          options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+            plugins:{legend:{display:false},tooltip:Object.assign({},TT,{callbacks:{label:function(c){var v=c.raw;return (v>=0?'Oladi (haqdor): +':'Beradi (qarzdor): −')+grp(Math.abs(v))+" so'm";}}})},
+            scales:{x:{grid:{color:'rgba(255,255,255,.06)'},border:{display:false},ticks:{callback:function(v){return som(v);},maxTicksLimit:5}},
+              y:{grid:{display:false},border:{display:false},ticks:{color:'#ECEEF3',font:{size:12}}}}}});
+      }
+      var cP=document.getElementById('cPie');
+      if(cP&&uLoans&&uLoans.length){
+        var pal=['#C9A96E','#7FB6FF','#5BD68B','#A78BFA','#EC6FA0','#E5C76B'];
+        window._chP=new Chart(cP,{type:'doughnut',
+          data:{labels:uLoans.map(function(o){return ((P_(o.counter)||{}).name||o.counter)+' → '+((P_(o.proj)||{}).name||o.proj);}),
+            datasets:[{data:uLoans.map(function(o){return o.amt;}),backgroundColor:pal,borderColor:'#0F1422',borderWidth:3,hoverOffset:6}]},
+          options:{responsive:true,maintainAspectRatio:false,cutout:'66%',
+            plugins:{legend:{position:'bottom',labels:{color:'#9AA3B8',boxWidth:9,font:{size:10.5},padding:8,usePointStyle:true}},
+              tooltip:Object.assign({},TT,{callbacks:{label:function(c){return ' '+c.label+': '+grp(c.raw)+" so'm";}}})}}});
+      }
+    }catch(e){}
   }
 
   var AIQ=["Kim kimga qarzdor?","Bu oy Impulse qancha sarfladi?","Umumiy seyfda qancha pul bor?"];
