@@ -116,6 +116,22 @@
   .dl-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--ln);font-size:13px}
   .dl-arrow{color:var(--am);font-weight:600}
   .dl-amt{margin-left:auto;font-family:var(--mono);font-weight:600;color:var(--am);white-space:nowrap;font-size:12.5px}
+  .dq-legend{font-size:11px;color:var(--tx2);margin:0 0 13px;line-height:1.6}
+  .dq-legend .g{color:var(--gr);font-size:13px} .dq-legend .r{color:var(--rd);font-size:13px}
+  .dq-stat{padding:11px 13px;border:1px solid var(--ln);border-left-width:3px;border-radius:12px;margin-bottom:9px;
+    background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+  .dq-stat-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .dq-stat-name{font-weight:500;font-size:14px}
+  .dq-stat-net{font-family:var(--mono);font-weight:600;font-size:15px;white-space:nowrap}
+  .dq-bar{height:7px;border-radius:4px;background:rgba(255,255,255,.05);margin-top:9px;overflow:hidden}
+  .dq-bar i{display:block;height:100%;border-radius:4px}
+  .dq-tag{font-size:11px;margin-top:7px}
+  .dq-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--ln)}
+  .dq-pair{display:flex;align-items:center;gap:7px;font-size:14px}
+  .dq-b{font-weight:600;color:var(--rd)} .dq-l{font-weight:500;color:var(--goldl)}
+  .dq-arrow{color:var(--tx3);flex:0 0 auto}
+  .dq-sub{font-size:11.5px;color:var(--tx3);margin-top:3px}
+  .dq-amt{margin-left:auto;font-family:var(--mono);font-weight:600;color:var(--tx);white-space:nowrap;font-size:12.5px;text-align:right;flex:0 0 auto}
   .ai-wrap{text-align:center;padding:6px 0}
   .ai-orb{position:relative;width:128px;height:128px;margin:16px auto 8px;cursor:pointer}
   .ai-orb .core{position:absolute;inset:38px;border-radius:50%;z-index:2;display:flex;align-items:center;justify-content:center;
@@ -541,29 +557,35 @@
     loans.forEach(function(o){
       if(o.cur==='USD'){sumD+=o.amt;}else{sumU+=o.amt;netU[o.proj]=(netU[o.proj]||0)+o.amt;netU[o.counter]=(netU[o.counter]||0)-o.amt;}
     });
-    var h='<div class="row2" style="margin-bottom:14px">'+
+    var h='<div class="row2" style="margin-bottom:12px">'+
       '<div class="mc"><div class="l">Jami qarz — so\'m</div><div class="v">'+grp(sumU)+'</div></div>'+
       '<div class="mc"><div class="l">Jami qarz — dollar</div><div class="v">$'+grp(sumD)+'</div></div></div>';
+    h+='<div class="dq-legend"><span class="g">●</span> <b style="color:var(--gr)">oladi (haqdor)</b> — boshqalar shu loyihaga qarzdor<br>'+
+       '<span class="r">●</span> <b style="color:var(--rd)">beradi (qarzdor)</b> — shu loyiha boshqalarga qarzdor</div>';
     var rows=Object.keys(netU).map(function(c){return {c:c,n:netU[c]};}).filter(function(x){return x.n!==0;}).sort(function(a,b){return b.n-a.n;});
     var max=1;rows.forEach(function(x){max=Math.max(max,Math.abs(x.n));});
     if(rows.length){
-      h+='<div class="sl">Loyihalar holati — so\'m</div>';
+      h+='<div class="sl">Har loyiha bo\'yicha — so\'m</div>';
       rows.forEach(function(x){
-        var w=Math.max(3,Math.round(50*Math.abs(x.n)/max));var nm=(P_(x.c)||{}).name||x.c;
-        var fill=x.n>0?('left:50%;width:'+w+'%;background:var(--gr)'):('left:'+(50-w)+'%;width:'+w+'%;background:var(--rd)');
-        var cl=x.n>0?'gr':'rd';var tag=x.n>0?'oladi':'beradi';
-        h+='<div class="dv-row"><div class="dv-name">'+esc(nm)+'</div>'+
-          '<div class="dv-track"><div class="dv-mid"></div><div class="dv-fill" style="'+fill+'"></div></div>'+
-          '<div class="dv-amt '+cl+'">'+(x.n>0?'+':'−')+grp(Math.abs(x.n))+'<br><span class="muted" style="font-size:10px">'+tag+'</span></div></div>';
+        var pos=x.n>0;var col=pos?'var(--gr)':'var(--rd)';var w=Math.max(6,Math.round(100*Math.abs(x.n)/max));
+        h+='<div class="dq-stat" style="border-left-color:'+col+'">'+
+          '<div class="dq-stat-top"><span class="dq-stat-name">'+esc((P_(x.c)||{}).name||x.c)+'</span>'+
+          '<span class="dq-stat-net" style="color:'+col+'">'+(pos?'+':'−')+grp(Math.abs(x.n))+'</span></div>'+
+          '<div class="dq-bar"><i style="width:'+w+'%;background:'+col+'"></i></div>'+
+          '<div class="dq-tag" style="color:'+col+'">'+(pos?'jami OLADI — haqdor':'jami BERADI — qarzdor')+'</div></div>';
       });
     }
     h+='<div class="sl">Kim kimga qarzdor</div>';
+    h+='<div class="dq-legend" style="margin-top:-4px"><b style="color:var(--rd)">Chapdagi</b> — qarzdor loyiha · <b style="color:var(--goldl)">o\'ngdagi</b> — pulni oladi · summa = qarz miqdori</div>';
     if(!loans.length)h+='<div class="muted" style="padding:14px 0;text-align:center">Qarz yo\'q</div>';
     loans.forEach(function(o){
       var b=(P_(o.counter)||{}).name||o.counter;var l=(P_(o.proj)||{}).name||o.proj;
-      h+='<div class="dl-item"><div style="min-width:0"><div><b>'+esc(b)+'</b> <span class="dl-arrow">→</span> '+esc(l)+'</div>'+
-        '<div class="muted" style="font-size:11.5px">'+esc(o.note||'')+(o.note?' · ':'')+esc(o.date)+'</div></div>'+
-        '<span class="dl-amt">'+fmt(o.cur,o.amt)+'</span></div>';
+      h+='<div class="dq-item"><div style="flex:1;min-width:0">'+
+        '<div class="dq-pair"><span class="dq-b">'+esc(b)+'</span>'+
+        '<svg class="dq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg>'+
+        '<span class="dq-l">'+esc(l)+'</span></div>'+
+        '<div class="dq-sub">'+esc(o.note||'qarz')+' · '+esc(o.date)+'</div></div>'+
+        '<span class="dq-amt">'+fmt(o.cur,o.amt)+'</span></div>';
     });
     $('view').innerHTML=h;
   }
