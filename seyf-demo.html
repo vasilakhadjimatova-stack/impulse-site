@@ -80,6 +80,12 @@
     font-family:inherit;background:var(--inset);color:var(--tx)}
   input:focus,select:focus{outline:0;border-color:var(--gold)}
   input::placeholder{color:var(--tx3)}
+  .amtwrap{position:relative}
+  .amtpre{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--goldl);font-weight:600;
+    font-family:var(--mono);font-size:16px;pointer-events:none;display:none}
+  .amtsuf{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:13px;pointer-events:none}
+  .amteq{margin-top:8px;font-size:12.5px;color:var(--lblg);font-family:var(--mono);min-height:16px}
+  #rateRow{margin-top:6px}
   .pbtn{width:100%;padding:14px;border:0;border-radius:12px;
     background:linear-gradient(180deg,#E2C684,#C9A96E);color:#241803;font-size:15px;font-weight:600;
     letter-spacing:.3px;cursor:pointer;font-family:inherit;margin-top:18px;box-shadow:0 8px 22px rgba(201,169,110,.22)}
@@ -458,13 +464,32 @@
          '<div><label class="fl">Miqdor</label><input id="f_sa" inputmode="decimal" placeholder="0" oninput="seyfGrp(this)"></div></div>';
       h+='<div class="row2"><div><label class="fl">Olinadi</label><select id="f_bc">'+curOpts('UZS')+'</select></div>'+
          '<div><label class="fl">Miqdor</label><input id="f_ba" inputmode="decimal" placeholder="0" oninput="seyfGrp(this)"></div></div>';}
-    else{h+='<label class="fl">Valyuta</label><select id="f_cur">'+curOpts('UZS')+'</select>';
-      h+='<label class="fl">Summa</label><input id="f_amt" inputmode="decimal" placeholder="0" oninput="seyfGrp(this)">';}
+    else{h+='<label class="fl">Valyuta</label><select id="f_cur" onchange="seyfCur()">'+curOpts('UZS')+'</select>';
+      h+='<label class="fl">Summa</label>'+
+         '<div class="amtwrap"><span class="amtpre" id="amtPre">$</span><span class="amtsuf" id="amtSuf">so\'m</span>'+
+         '<input id="f_amt" inputmode="decimal" placeholder="0" oninput="seyfGrp(this);seyfEq()"></div>'+
+         '<div id="rateRow" style="display:none"><label class="fl">Kurs — 1$ necha so\'m?</label>'+
+         '<input id="f_rate" inputmode="decimal" placeholder="12 850" oninput="seyfGrp(this);seyfEq()">'+
+         '<div class="amteq" id="amtEq"></div></div>';}
     if(t==='income'||t==='expense'){var cats=t==='income'?["Mijoz to'lovi","Avans","Ijara tushumi","Boshqa kirim"]:["Oylik / ish haqi","Ijara","Marketing","Ta'minot / xarid","Boshqa chiqim"];
       h+='<label class="fl">Modda</label><select id="f_cat">'+cats.map(function(c){return '<option>'+esc(c)+'</option>';}).join('')+'</select>';}
     if(t==='transfer')h+='<label class="fl" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="f_loan" style="width:auto"> Qarz sifatida</label>';
     h+='<label class="fl">Izoh</label><input id="f_note" placeholder="ixtiyoriy">';
-    h+='<button class="pbtn" onclick="seyfSave()">Saqlash — '+LAB[t]+'</button>';$('view').innerHTML=h;}
+    h+='<button class="pbtn" onclick="seyfSave()">Saqlash — '+LAB[t]+'</button>';$('view').innerHTML=h;seyfCur();}
+  window.seyfCur=function(){
+    var sel=$('f_cur');if(!sel)return;var usd=sel.value==='USD';
+    var pre=$('amtPre'),suf=$('amtSuf'),inp=$('f_amt'),rr=$('rateRow');
+    if(pre)pre.style.display=usd?'block':'none';
+    if(suf)suf.style.display=usd?'none':'block';
+    if(inp){inp.style.paddingLeft=usd?'28px':'13px';inp.style.paddingRight=usd?'13px':'54px';}
+    if(rr)rr.style.display=usd?'block':'none';
+    seyfEq();};
+  window.seyfEq=function(){
+    var eq=$('amtEq');if(!eq)return;var sel=$('f_cur');
+    if(!sel||sel.value!=='USD'){eq.textContent='';return;}
+    var a=parseFloat(($('f_amt').value||'').replace(/ /g,''))||0;
+    var r=parseFloat((($('f_rate')||{}).value||'').replace(/ /g,''))||0;
+    eq.textContent=(a>0&&r>0)?('≈ '+grp(a*r)+" so'm"):'';};
   window.seyfGrp=function(inp){var v=(inp.value||'').replace(/[^\d.]/g,'');var pr=v.split('.');pr[0]=pr[0].replace(/\B(?=(\d{3})+(?!\d))/g,' ');inp.value=pr.join('.');};
   function num(id){var e=$(id);if(!e)return 0;return parseFloat((e.value||'').replace(/ /g,''))||0;}
   window.seyfSave=function(){
