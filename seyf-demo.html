@@ -21,15 +21,16 @@
   body{margin:0;background:
       radial-gradient(120% 50% at 50% -8%,rgba(201,169,110,.10),transparent 60%),
       var(--bg);color:var(--tx);font-family:Inter,-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
-    font-size:14px;line-height:1.5;padding:16px 14px;display:flex;justify-content:center;min-height:100vh}
-  #seyf{width:100%;max-width:420px;background:linear-gradient(180deg,#0F1422,#0B0F1A);
-    border:1px solid var(--ln);border-radius:20px;overflow:hidden;
-    box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.02) inset}
+    font-size:14px;line-height:1.5;padding:0;display:flex;justify-content:center;min-height:100vh;min-height:100dvh}
+  #seyf{width:100%;max-width:480px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#0F1422,#0B0F1A);overflow:hidden;box-shadow:0 0 50px rgba(0,0,0,.5)}
+  #loginScr{flex:1;display:flex;flex-direction:column;justify-content:center}
+  #appScr{flex:1;min-height:0;flex-direction:column}
   .hd{display:flex;align-items:center;gap:10px;padding:15px 16px;border-bottom:1px solid var(--ln);
     background:linear-gradient(180deg,rgba(201,169,110,.06),transparent)}
   .hd .t{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:.5px;color:var(--goldl)}
   .chip{font-size:11px;padding:4px 11px;border-radius:999px;background:var(--infobg);color:var(--goldl);border:1px solid var(--ln)}
-  .view{padding:16px;min-height:450px}
+  .view{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px}
   .nav{display:flex;border-top:1px solid var(--ln);background:rgba(0,0,0,.2)}
   .nav button{flex:1;background:none;border:0;padding:11px 4px;font-size:11px;color:var(--tx3);
     display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font-family:inherit}
@@ -421,7 +422,7 @@
     var c=($('codeIn').value||'').trim();var r=ROLES[c];
     if(!r){$('loginErr').textContent='Kod noto\'g\'ri';return;}
     st.role=r.role;st.sc=r.sc||null;st.view='dash';
-    $('loginScr').style.display='none';$('appScr').style.display='block';
+    $('loginScr').style.display='none';$('appScr').style.display='flex';
     $('roleChip').textContent=ROLE_UZ[st.role];
     $('nav-new').style.display=canWrite()?'flex':'none';seyfGo('dash');};
   window.seyfGo=function(v){st.view=v;render();};
