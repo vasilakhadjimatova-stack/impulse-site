@@ -99,112 +99,234 @@
 <div id="seyf">
   <div id="loginScr">
 <style>
-/* ===== SEYF — Vault Door Login (brushed-steel safe) ===== */
-.vlt-wrap{--vs1:#2a2f38;--vs2:#3a414d;--vs3:#1c2027;--vg:#C9A96E;--vgl:#E8D7B8;--vgd:#A0793C;--vtx:#ECEEF3;--vtx2:#9AA3B8;--vtx3:#646C80;position:relative;width:100%;box-sizing:border-box;padding:14px 0 8px;font-family:'Inter',system-ui,sans-serif;color:var(--vtx);-webkit-tap-highlight-color:transparent}
-.vlt-wrap *,.vlt-wrap *::before,.vlt-wrap *::after{box-sizing:border-box}
-.vlt-frame{position:relative;border-radius:24px;padding:12px;background:linear-gradient(135deg,#11151c,#070a0f 60%,#0d1117);box-shadow:inset 0 2px 3px rgba(255,255,255,.05),inset 0 -3px 8px rgba(0,0,0,.8),0 24px 60px rgba(0,0,0,.7)}
-.vlt-hinge{position:absolute;left:-3px;width:10px;height:32px;border-radius:5px;background:linear-gradient(90deg,#0c0f14,#454d5b 35%,#7b8699 50%,#3a414d 70%,#0c0f14);box-shadow:0 2px 5px rgba(0,0,0,.7),inset 0 1px 1px rgba(255,255,255,.25);z-index:5}
-.vlt-hinge.h1{top:46px}.vlt-hinge.h2{top:50%;transform:translateY(-50%)}.vlt-hinge.h3{bottom:46px}
-.vlt-hinge::after{content:"";position:absolute;inset:5px 3px;border-radius:3px;background:radial-gradient(circle at 40% 30%,#aeb7c7,#1a1e26)}
-.vlt-door{position:relative;overflow:hidden;border-radius:17px;padding:24px 18px 26px;background:repeating-linear-gradient(92deg,rgba(255,255,255,.018) 0 1px,rgba(0,0,0,.02) 1px 2px),radial-gradient(120% 80% at 50% 6%,rgba(255,255,255,.10),rgba(255,255,255,0) 55%),conic-gradient(from 210deg at 50% 42%,#343b46,#272d36 18%,#3c434f 34%,#232830 52%,#3a414d 70%,#262c35 86%,#343b46);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),inset 0 2px 4px rgba(255,255,255,.10),inset 0 -10px 24px rgba(0,0,0,.6),inset 0 0 60px rgba(0,0,0,.45)}
-.vlt-door::before{content:"";position:absolute;top:-60%;left:-45%;width:55%;height:220%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.13) 45%,rgba(255,255,255,.20) 50%,transparent 60%);transform:rotate(8deg);pointer-events:none;animation:vltSheen 2.4s ease-out .3s 1 both}
-@keyframes vltSheen{from{left:-50%}to{left:135%}}
-.vlt-rivet{position:absolute;width:11px;height:11px;border-radius:50%;z-index:4;background:radial-gradient(circle at 36% 30%,#cfd6e2,#8b94a5 38%,#3b414c 70%,#14171d);box-shadow:0 1px 2px rgba(0,0,0,.7),inset 0 -1px 1px rgba(0,0,0,.5),inset 0 1px 1px rgba(255,255,255,.45)}
-.vlt-rivet.tl{top:11px;left:11px}.vlt-rivet.tr{top:11px;right:11px}.vlt-rivet.bl{bottom:11px;left:11px}.vlt-rivet.br{bottom:11px;right:11px}.vlt-rivet.ml{top:50%;left:9px;transform:translateY(-50%)}.vlt-rivet.mr{top:50%;right:9px;transform:translateY(-50%)}
-.vlt-plate{position:relative;text-align:center;margin:2px auto 18px;padding:12px 26px 11px;max-width:280px;border-radius:11px;background:linear-gradient(180deg,#454c58,#2a3039 55%,#373e49);box-shadow:inset 0 1px 1px rgba(255,255,255,.22),inset 0 -2px 4px rgba(0,0,0,.55),0 3px 8px rgba(0,0,0,.5)}
-.vlt-plate::before,.vlt-plate::after{content:"";position:absolute;top:50%;width:7px;height:7px;border-radius:50%;transform:translateY(-50%);background:radial-gradient(circle at 40% 35%,#d8dee9,#7b8497 45%,#2a2f38);box-shadow:inset 0 0 1px rgba(0,0,0,.6)}
-.vlt-plate::before{left:9px}.vlt-plate::after{right:9px}
-.vlt-brand{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:46px;line-height:.9;letter-spacing:.07em;background:linear-gradient(180deg,#fff6e3,var(--vgl) 30%,var(--vg) 60%,var(--vgd));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,.18)) drop-shadow(0 2px 2px rgba(0,0,0,.55))}
-.vlt-sub{margin-top:3px;font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--vtx2);text-shadow:0 1px 0 rgba(0,0,0,.6)}
-.vlt-dialwrap{display:flex;justify-content:center;margin:2px 0 20px}
-.vlt-dial{position:relative;width:138px;height:138px;border-radius:50%;background:conic-gradient(from 0deg,#3f4654,#23272f 12%,#454d5c 25%,#262b33 50%,#454d5c 75%,#23272f 88%,#3f4654),radial-gradient(circle at 50% 38%,rgba(255,255,255,.12),rgba(0,0,0,0) 60%);box-shadow:inset 0 2px 3px rgba(255,255,255,.18),inset 0 -6px 14px rgba(0,0,0,.65),0 8px 18px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.5)}
-.vlt-dial svg{position:absolute;inset:0;width:100%;height:100%}
-.vlt-recess{position:absolute;inset:24px;border-radius:50%;background:radial-gradient(circle at 50% 40%,#1c1f27,#0c0f15 70%);box-shadow:inset 0 2px 6px rgba(0,0,0,.85),inset 0 -1px 0 rgba(255,255,255,.05)}
-.vlt-hub{position:absolute;top:50%;left:50%;width:54px;height:54px;border-radius:50%;transform:translate(-50%,-50%);z-index:2;background:radial-gradient(circle at 40% 30%,#f6e7c4,#d9b878 30%,var(--vg) 50%,var(--vgd) 80%,#7a5a2c);box-shadow:inset 0 2px 3px rgba(255,255,255,.6),inset 0 -3px 6px rgba(74,52,22,.8),0 0 0 1px rgba(0,0,0,.45),0 4px 12px -4px rgba(0,0,0,.7)}
-.vlt-hub::after{content:"";position:absolute;top:50%;left:50%;width:2px;height:34%;background:linear-gradient(rgba(74,52,22,.7),transparent);transform:translate(-50%,-100%);border-radius:2px}
-.vlt-idx{position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:0;height:0;z-index:4;border-left:5px solid transparent;border-right:5px solid transparent;border-top:9px solid var(--vg);filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
-.vlt-field{position:relative;margin:0 auto 4px;max-width:284px}
-.vlt-label{display:block;text-align:center;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--vtx3);margin-bottom:8px;text-shadow:0 1px 0 rgba(0,0,0,.5)}
-.vlt-slot{position:relative;border-radius:12px;background:linear-gradient(180deg,#0a0d13,#0f131a);box-shadow:inset 0 3px 7px rgba(0,0,0,.9),inset 0 -1px 1px rgba(255,255,255,.06),inset 0 0 0 1px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.05);transition:box-shadow .3s ease}
-.vlt-slot input{width:100%;border:0;outline:0;background:transparent;color:var(--vgl);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:24px;font-weight:600;letter-spacing:.42em;text-indent:.42em;text-align:center;padding:15px 12px;caret-color:var(--vg);text-shadow:0 1px 2px rgba(0,0,0,.8),0 0 10px rgba(201,169,110,.18)}
-.vlt-slot input::placeholder{color:#3a4150;letter-spacing:.42em;font-weight:500;text-shadow:none}
-.vlt-slot:focus-within{box-shadow:inset 0 3px 7px rgba(0,0,0,.85),inset 0 0 0 1px rgba(201,169,110,.5),0 0 0 3px rgba(201,169,110,.16),0 0 22px -2px rgba(201,169,110,.4)}
-#loginErr{min-height:16px;text-align:center;margin:10px auto 2px;max-width:284px;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:#ff8c84;text-shadow:0 1px 2px rgba(0,0,0,.7)}
-#loginErr:not(:empty){padding:6px 10px;border-radius:8px;background:linear-gradient(180deg,rgba(120,30,30,.35),rgba(60,12,12,.25));box-shadow:inset 0 1px 1px rgba(255,255,255,.06),inset 0 -2px 5px rgba(0,0,0,.5)}
-.vlt-handlewrap{display:flex;flex-direction:column;align-items:center;margin:16px 0 6px}
-.vlt-handle{position:relative;width:100px;height:100px;border-radius:50%;cursor:pointer;border:0;padding:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 38% 28%,#f8ecce,#e2c389 22%,var(--vg) 46%,var(--vgd) 74%,#74541f);box-shadow:inset 0 3px 4px rgba(255,255,255,.6),inset 0 -6px 12px rgba(64,44,16,.85),0 0 0 1px rgba(0,0,0,.5),0 0 0 7px rgba(201,169,110,.08),0 0 0 8px rgba(0,0,0,.4),0 12px 26px -8px rgba(0,0,0,.8),0 0 26px -6px rgba(201,169,110,.3);transition:transform .12s ease,box-shadow .25s ease,filter .25s ease}
-.vlt-handle:hover{filter:brightness(1.05);box-shadow:inset 0 3px 4px rgba(255,255,255,.65),inset 0 -6px 12px rgba(64,44,16,.85),0 0 0 1px rgba(0,0,0,.5),0 0 0 7px rgba(201,169,110,.16),0 0 0 8px rgba(0,0,0,.4),0 12px 26px -8px rgba(0,0,0,.8),0 0 34px -4px rgba(201,169,110,.55)}
-.vlt-handle:active{transform:scale(.95) rotate(8deg)}
-.vlt-handle:focus-visible{outline:2px solid var(--vgl);outline-offset:5px}
-.vlt-spokes{position:absolute;inset:0;z-index:1;pointer-events:none}
-.vlt-cap{position:relative;z-index:2;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 40% 32%,#fbf0d4,#d9b878 40%,#b08c4e 72%,#856330);box-shadow:inset 0 2px 2px rgba(255,255,255,.7),inset 0 -2px 4px rgba(74,52,22,.7),0 1px 2px rgba(0,0,0,.5)}
-.vlt-handle-lbl{margin-top:12px;font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;background:linear-gradient(180deg,var(--vgl),var(--vg) 55%,var(--vgd));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 0 rgba(0,0,0,.4);padding-left:.32em}
-.vlt-demo{margin:14px auto 4px;max-width:330px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;line-height:1.7;color:var(--vtx3);letter-spacing:.01em;text-shadow:0 1px 0 rgba(0,0,0,.55)}
-.vlt-demo .t{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--vg);font-weight:700;margin-bottom:5px}
-.vlt-demo b{color:var(--vgl);font-weight:600}
-.vlt-demo .sep{color:#3a414d;padding:0 2px}
-@media (max-width:360px){.vlt-brand{font-size:40px}.vlt-dial{width:124px;height:124px}.vlt-handle{width:92px;height:92px}.vlt-slot input{font-size:21px}}
-@media (prefers-reduced-motion:reduce){.vlt-door::before{display:none;animation:none}.vlt-handle,.vlt-slot,.vlt-dial{transition:none}}
+.vlt-wrap{
+ --vs1:#2a2f38;--vs2:#3a414d;--vs3:#1c2027;
+ --vg:#C9A96E;--vgl:#F1E1BC;--vgh:#FFF7E4;--vgd:#9A6F30;
+ --vtx:#ECEEF3;--vtx2:#9AA3B8;--vtx3:#646C80;
+ --brush:repeating-linear-gradient(180deg,rgba(255,255,255,.045) 0,rgba(255,255,255,.045) .5px,rgba(0,0,0,.05) 1px,rgba(0,0,0,.05) 1.5px),repeating-linear-gradient(180deg,rgba(255,255,255,.02) 0,rgba(0,0,0,.03) 2px);
+ --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+ position:relative;width:100%;max-width:420px;margin:0 auto;box-sizing:border-box;padding:14px 0 8px;font-family:'Inter',system-ui,sans-serif;color:var(--vtx);-webkit-text-size-adjust:100%}
+.vlt-wrap *{box-sizing:border-box}
+.vlt-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+.vlt-frame{position:relative;border-radius:26px;padding:13px;
+ background:linear-gradient(135deg,#161a21,#06090e 56%,#0d1117);
+ box-shadow:inset 0 2px 3px rgba(255,255,255,.06),inset 0 -4px 10px rgba(0,0,0,.85),inset 0 0 0 1px rgba(0,0,0,.6),0 28px 70px rgba(0,0,0,.74),0 6px 18px rgba(0,0,0,.6)}
+.vlt-frame::after{content:"";position:absolute;inset:13px;border-radius:18px;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(180,196,224,.10),inset 0 0 28px rgba(0,0,0,.5)}
+
+.vlt-hinge{position:absolute;left:-4px;width:11px;height:34px;border-radius:5px;z-index:3;
+ background:linear-gradient(90deg,#0a0d12,#3f4757 30%,#aeb9cc 50%,#39404c 70%,#0a0d12);
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.4),inset 0 -2px 3px rgba(0,0,0,.7),2px 2px 5px rgba(0,0,0,.6)}
+.vlt-hinge.h1{top:40px}.vlt-hinge.h2{top:50%;transform:translateY(-50%)}.vlt-hinge.h3{bottom:40px}
+
+.vlt-door{position:relative;overflow:hidden;border-radius:18px;padding:24px 17px 22px;isolation:isolate;
+ background:
+  radial-gradient(120% 80% at 48% 8%,rgba(255,255,255,.10),transparent 46%),
+  conic-gradient(from 214deg at 47% 40%,#363d49,#272d36 16%,#3e4653 33%,#232830 50%,#3c434f 67%,#262c35 84%,#363d49);
+ box-shadow:inset 0 2px 4px rgba(255,255,255,.07),inset 0 -10px 26px rgba(0,0,0,.62),inset 0 0 0 1px rgba(0,0,0,.45)}
+.vlt-steel{position:absolute;inset:0;border-radius:18px;pointer-events:none}
+.vlt-steel.brush{background:var(--brush);opacity:.9;mix-blend-mode:overlay}
+.vlt-steel.grain{background-image:var(--noise);background-size:90px 90px;opacity:.06;mix-blend-mode:overlay}
+.vlt-steel.spec{background:linear-gradient(120deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.05) 14%,transparent 28%,transparent 60%,rgba(0,0,0,.26) 88%,rgba(0,0,0,.4) 100%);mix-blend-mode:screen;opacity:.9}
+.vlt-steel.vig{background:radial-gradient(128% 112% at 48% 36%,transparent 52%,rgba(0,0,0,.33) 86%,rgba(0,0,0,.5) 100%)}
+.vlt-sheen{position:absolute;top:-40%;left:-50%;width:52%;height:200%;z-index:9;pointer-events:none;
+ background:linear-gradient(104deg,transparent,rgba(255,255,255,.32),transparent);
+ transform:translateX(-50%) skewX(-13deg);opacity:0;animation:vltSheen 1.5s cubic-bezier(.4,0,.2,1) .35s 1 both}
+@keyframes vltSheen{0%{opacity:0;transform:translateX(-50%) skewX(-13deg)}18%{opacity:.88}100%{opacity:0;transform:translateX(360%) skewX(-13deg)}}
+
+.vlt-inner{position:relative;z-index:5}
+
+.vlt-rivet{position:absolute;width:13px;height:13px;border-radius:50%;z-index:6;
+ background:radial-gradient(circle at 35% 28%,#dde3ef,#9aa3b4 36%,#4a515d 64%,#13161c 100%);
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.55),inset 0 -2px 2px rgba(0,0,0,.72),1px 2px 3px rgba(0,0,0,.6)}
+.vlt-rivet::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:1.6px;border-radius:1px;
+ transform:translate(-50%,-50%) rotate(38deg);background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.85),rgba(0,0,0,.55));
+ box-shadow:0 1px 0 rgba(255,255,255,.25)}
+.r-tl{top:9px;left:9px}.r-tr{top:9px;right:9px}.r-bl{bottom:9px;left:9px}.r-br{bottom:9px;right:9px}
+
+.vlt-plate{position:relative;text-align:center;margin:2px auto 16px;padding:12px 28px 11px;max-width:284px;border-radius:11px;z-index:6;
+ background:linear-gradient(180deg,#4a515e 0,#2c323c 52%,#3a414c 100%),repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px);
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.26),inset 0 -2px 4px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.4),0 3px 7px rgba(0,0,0,.5)}
+.vlt-plate::before{content:"";position:absolute;inset:0;border-radius:11px;background:var(--brush);opacity:.5;mix-blend-mode:overlay;pointer-events:none}
+.vlt-pscrew{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#cdd4e0,#7c8595 46%,#2e343e 100%);box-shadow:inset 0 -1px 1px rgba(0,0,0,.6),0 1px 1px rgba(0,0,0,.5)}
+.vlt-pscrew::after{content:"";position:absolute;left:50%;top:50%;width:5px;height:1px;background:rgba(0,0,0,.7);transform:translate(-50%,-50%) rotate(-30deg)}
+.ps-tl{top:6px;left:7px}.ps-tr{top:6px;right:7px}.ps-bl{bottom:6px;left:7px}.ps-br{bottom:6px;right:7px}
+.vlt-brand{position:relative;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:48px;line-height:1;letter-spacing:.01em;
+ background:linear-gradient(180deg,#FFFBEF 4%,var(--vgl) 30%,var(--vg) 58%,var(--vgd) 92%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 1px 0 rgba(0,0,0,.6)) drop-shadow(0 -1px 0 rgba(255,245,220,.16))}
+.vlt-sub{position:relative;margin-top:4px;font-size:10px;letter-spacing:.27em;text-indent:.27em;text-transform:uppercase;color:var(--vtx2);text-shadow:0 1px 1px rgba(0,0,0,.6)}
+
+.vlt-dialwrap{position:relative;width:152px;height:152px;margin:6px auto 18px;z-index:6}
+.vlt-dialwell{position:absolute;inset:0;border-radius:50%;
+ background:radial-gradient(circle at 50% 44%,#1b1f26,#13161c 70%,#0d1015 100%);
+ box-shadow:inset 0 5px 13px rgba(0,0,0,.88),inset 0 -2px 4px rgba(255,255,255,.05),0 2px 3px rgba(255,255,255,.06)}
+.vlt-bezel{position:absolute;inset:6px;border-radius:50%;
+ background:conic-gradient(from 0deg,#e9eef6,#7c8594 7%,#cfd6e2 15%,#2c323c 25%,#cdd4e0 33%,#6b7484 41%,#e4e9f1 50%,#79828f 58%,#c8cfdb 66%,#333944 75%,#bcc4d0 83%,#727b8a 91%,#e9eef6);
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.5),inset 0 -2px 4px rgba(0,0,0,.6),0 1px 2px rgba(0,0,0,.5)}
+.vlt-bezel::after{content:"";position:absolute;inset:0;border-radius:50%;background:linear-gradient(124deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,0) 34%,rgba(0,0,0,0) 60%,rgba(0,0,0,.4) 100%);mix-blend-mode:overlay}
+.vlt-ring{position:absolute;inset:14px;border-radius:50%;z-index:2;
+ background:
+  radial-gradient(circle at 48% 38%,#454d5b,#2c323c 46%,#20252d 78%,#171b22),
+  conic-gradient(from 0deg,rgba(255,255,255,.05),rgba(0,0,0,.13) 12%,rgba(255,255,255,.05) 25%,rgba(0,0,0,.13) 50%,rgba(255,255,255,.05) 75%,rgba(0,0,0,.13) 88%,rgba(255,255,255,.05));
+ box-shadow:inset 0 2px 5px rgba(255,255,255,.1),inset 0 -5px 12px rgba(0,0,0,.7)}
+.vlt-ring svg{position:absolute;inset:0;width:100%;height:100%}
+.vlt-pointer{position:absolute;top:-2px;left:50%;width:0;height:0;transform:translateX(-50%);z-index:5;
+ border-left:7px solid transparent;border-right:7px solid transparent;border-top:14px solid var(--vgl);
+ filter:drop-shadow(0 1px 1px rgba(0,0,0,.7))}
+.vlt-pointer::after{content:"";position:absolute;left:-4px;top:-14px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:9px solid var(--vgd)}
+.vlt-hub{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;z-index:4;
+ background:radial-gradient(circle at 37% 28%,var(--vgh) 0%,#F0DBA8 18%,var(--vgl) 36%,var(--vg) 58%,var(--vgd) 82%,#6E4E22 100%);
+ box-shadow:inset 0 2px 3px rgba(255,255,255,.6),inset 0 -3px 6px rgba(80,52,18,.78),0 2px 4px rgba(0,0,0,.55)}
+.vlt-hub svg{position:absolute;inset:0;width:100%;height:100%}
+.vlt-hub::after{content:"";position:absolute;left:20%;top:14%;width:34%;height:26%;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(255,253,245,.95),rgba(255,253,245,0) 70%);filter:blur(.5px)}
+
+.vlt-lbl{display:block;text-align:center;font-size:10px;letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;color:var(--vtx2);margin:0 0 7px;text-shadow:0 1px 1px rgba(0,0,0,.6)}
+
+.vlt-slot{position:relative;max-width:284px;margin:0 auto;border-radius:13px;z-index:6;padding:3px;
+ background:linear-gradient(180deg,#5a626f,#2b313b 50%,#444b57);
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.3),0 2px 4px rgba(0,0,0,.5)}
+.vlt-slotin{position:relative;border-radius:10px;overflow:hidden;
+ background:linear-gradient(180deg,#080b11,#0e131a 60%,#0a0e14);
+ box-shadow:inset 0 4px 9px rgba(0,0,0,.92),inset 0 -1px 1px rgba(255,255,255,.05),inset 0 0 0 1px rgba(0,0,0,.6);transition:box-shadow .3s ease}
+.vlt-slotin::before{content:"";position:absolute;inset:0;background:var(--brush);opacity:.35;mix-blend-mode:overlay;pointer-events:none}
+.vlt-slot input{position:relative;width:100%;border:0;background:transparent;color:var(--vgl);
+ font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;letter-spacing:.42em;text-indent:.42em;text-align:center;padding:15px 12px;outline:none;
+ text-shadow:0 0 8px rgba(232,215,184,.45),0 1px 1px rgba(0,0,0,.8)}
+.vlt-slot input::placeholder{color:rgba(201,169,110,.34);text-shadow:none}
+.vlt-slot:focus-within .vlt-slotin{box-shadow:inset 0 4px 9px rgba(0,0,0,.9),inset 0 0 0 1.5px rgba(201,169,110,.55),0 0 16px rgba(201,169,110,.33)}
+
+#loginErr{min-height:0;text-align:center;font-size:12px;font-weight:500;color:#F2A8A0;margin:8px 2px 0;letter-spacing:.02em;text-shadow:0 1px 2px rgba(0,0,0,.7)}
+#loginErr:empty{margin:0}
+
+.vlt-handlewrap{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;margin-top:18px;z-index:6}
+.vlt-hshadow{position:absolute;left:50%;top:84px;width:88px;height:18px;transform:translateX(-50%);border-radius:50%;
+ background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,.56),transparent 72%);filter:blur(3px);z-index:0}
+.vlt-handle{position:relative;width:96px;height:96px;border-radius:50%;border:0;padding:0;cursor:pointer;z-index:2;
+ background:radial-gradient(circle at 37% 27%,var(--vgh) 0%,#F4E2B4 14%,var(--vgl) 32%,var(--vg) 56%,var(--vgd) 82%,#6B4C20 100%);
+ box-shadow:0 10px 20px rgba(0,0,0,.55),0 3px 6px rgba(0,0,0,.5),inset 0 3px 5px rgba(255,255,255,.62),inset 0 -5px 11px rgba(70,46,16,.8),inset 0 0 0 1px rgba(108,77,29,.55);
+ transition:transform .12s ease,box-shadow .2s ease;-webkit-tap-highlight-color:transparent}
+.vlt-handle svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.vlt-handle::before{content:"";position:absolute;top:11%;left:18%;width:38%;height:30%;border-radius:50%;pointer-events:none;
+ background:radial-gradient(circle at 42% 40%,rgba(255,253,246,.98),rgba(255,253,246,0) 68%);filter:blur(.5px)}
+.vlt-handle::after{content:"";position:absolute;inset:26%;border-radius:50%;pointer-events:none;
+ background:radial-gradient(circle at 38% 30%,#F4E2B4,var(--vg) 52%,var(--vgd) 88%,#5d4119);
+ box-shadow:inset 0 3px 5px rgba(0,0,0,.55),inset 0 -2px 3px rgba(255,243,214,.4),0 1px 1px rgba(255,243,214,.3)}
+.vlt-glyph{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;font-size:21px;line-height:1;color:#4a3414;text-shadow:0 1px 0 rgba(255,243,214,.45),0 -1px 1px rgba(0,0,0,.4)}
+.vlt-handle:hover{transform:translateY(-1px)}
+.vlt-handle:active{transform:translateY(1px) scale(.985)}
+.vlt-handle:focus-visible{outline:none;box-shadow:0 10px 20px rgba(0,0,0,.55),0 0 0 3px rgba(201,169,110,.5),inset 0 3px 5px rgba(255,255,255,.62),inset 0 -5px 11px rgba(70,46,16,.8)}
+.vlt-handle-lbl{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;letter-spacing:.34em;text-indent:.34em;text-transform:uppercase;margin-top:11px;
+ background:linear-gradient(180deg,var(--vgl),var(--vg) 60%,var(--vgd));-webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+
+.vlt-demo{position:relative;z-index:6;font-family:'JetBrains Mono',monospace;font-size:9.5px;line-height:1.7;color:var(--vtx3);text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);text-shadow:0 1px 1px rgba(0,0,0,.5)}
+.vlt-demo b{color:var(--vg);font-weight:500}
+
+@media (max-width:380px){.vlt-brand{font-size:42px}.vlt-dialwrap{width:138px;height:138px}.vlt-door{padding:22px 14px 20px}.vlt-slot input{font-size:22px}}
+@media (prefers-reduced-motion:reduce){.vlt-sheen{display:none;animation:none}.vlt-handle{transition:none}}
 </style>
-<div class="vlt-wrap">
-  <div class="vlt-frame">
-    <span class="vlt-hinge h1"></span><span class="vlt-hinge h2"></span><span class="vlt-hinge h3"></span>
-    <div class="vlt-door">
-      <span class="vlt-rivet tl"></span><span class="vlt-rivet tr"></span><span class="vlt-rivet bl"></span><span class="vlt-rivet br"></span><span class="vlt-rivet ml"></span><span class="vlt-rivet mr"></span>
+
+<h2 class="vlt-sr">Seyf umumiy kassa boshqaruvi — maxfiy kod bilan kirish</h2>
+
+<div class="vlt-wrap"><div class="vlt-frame">
+  <span class="vlt-hinge h1"></span><span class="vlt-hinge h2"></span><span class="vlt-hinge h3"></span>
+  <div class="vlt-door">
+    <span class="vlt-steel brush"></span>
+    <span class="vlt-steel grain"></span>
+    <span class="vlt-steel spec"></span>
+    <span class="vlt-steel vig"></span>
+    <span class="vlt-sheen"></span>
+
+    <span class="vlt-rivet r-tl"></span><span class="vlt-rivet r-tr"></span>
+    <span class="vlt-rivet r-bl"></span><span class="vlt-rivet r-br"></span>
+
+    <div class="vlt-inner">
       <div class="vlt-plate">
+        <span class="vlt-pscrew ps-tl"></span><span class="vlt-pscrew ps-tr"></span>
+        <span class="vlt-pscrew ps-bl"></span><span class="vlt-pscrew ps-br"></span>
         <div class="vlt-brand">Seyf</div>
         <div class="vlt-sub">Umumiy kassa boshqaruvi</div>
       </div>
+
       <div class="vlt-dialwrap">
-        <div class="vlt-dial">
-          <span class="vlt-idx"></span>
+        <span class="vlt-pointer"></span>
+        <div class="vlt-dialwell"></div>
+        <div class="vlt-bezel"></div>
+        <div class="vlt-ring">
           <svg viewBox="0 0 100 100" aria-hidden="true">
-            <circle cx="50" cy="50" r="45.5" fill="none" stroke="#0c0f14" stroke-width="3" stroke-dasharray="1.6 2.35"/>
-            <circle cx="50" cy="50" r="45.5" fill="none" stroke="#aeb7c7" stroke-width="1.3" stroke-dasharray="1.6 2.35"/>
-            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="9"/>
-            <g fill="#E8D7B8" font-family="'JetBrains Mono',monospace" font-size="6" font-weight="700" text-anchor="middle" dominant-baseline="middle">
-              <text x="50" y="16">0</text><text x="69" y="22.5">10</text><text x="81.5" y="38">20</text><text x="85" y="56">30</text><text x="77" y="73">40</text><text x="50" y="80">50</text><text x="23" y="73">60</text><text x="15" y="56">70</text><text x="18.5" y="38">80</text><text x="31" y="22.5">90</text>
+            <g stroke="#d8dee9" stroke-width="0.8" stroke-linecap="round" opacity="0.55">
+              <line x1="50" y1="6" x2="50" y2="11"/><line x1="72" y1="12" x2="69.8" y2="16.4"/>
+              <line x1="88" y1="28" x2="83.6" y2="30.2"/><line x1="94" y1="50" x2="89" y2="50"/>
+              <line x1="88" y1="72" x2="83.6" y2="69.8"/><line x1="72" y1="88" x2="69.8" y2="83.6"/>
+              <line x1="50" y1="94" x2="50" y2="89"/><line x1="28" y1="88" x2="30.2" y2="83.6"/>
+              <line x1="12" y1="72" x2="16.4" y2="69.8"/><line x1="6" y1="50" x2="11" y2="50"/>
+              <line x1="12" y1="28" x2="16.4" y2="30.2"/><line x1="28" y1="12" x2="30.2" y2="16.4"/>
+            </g>
+            <g stroke="#6f7a8a" stroke-width="0.5" stroke-linecap="round" opacity="0.5">
+              <line x1="61" y1="8" x2="60" y2="12.6"/><line x1="81" y1="19" x2="78" y2="22.4"/>
+              <line x1="92" y1="39" x2="87.4" y2="41"/><line x1="92" y1="61" x2="87.4" y2="59"/>
+              <line x1="81" y1="81" x2="78" y2="77.6"/><line x1="61" y1="92" x2="60" y2="87.4"/>
+              <line x1="39" y1="92" x2="40" y2="87.4"/><line x1="19" y1="81" x2="22" y2="77.6"/>
+              <line x1="8" y1="61" x2="12.6" y2="59"/><line x1="8" y1="39" x2="12.6" y2="41"/>
+              <line x1="19" y1="19" x2="22" y2="22.4"/><line x1="39" y1="8" x2="40" y2="12.6"/>
+            </g>
+            <g fill="#e3e8f0" font-family="'JetBrains Mono',monospace" font-size="6" font-weight="500" text-anchor="middle" opacity="0.85">
+              <text x="50" y="21">0</text><text x="80.5" y="52.2">75</text>
+              <text x="50" y="84">50</text><text x="20" y="52.2">25</text>
             </g>
           </svg>
-          <div class="vlt-recess"></div>
-          <div class="vlt-hub"></div>
+        </div>
+        <div class="vlt-hub">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <g stroke="#6f5026" stroke-width="1" stroke-linecap="round" opacity="0.58">
+              <line x1="50" y1="4" x2="50" y2="9"/><line x1="73" y1="11" x2="70.5" y2="15.5"/>
+              <line x1="89" y1="27" x2="84.5" y2="29.5"/><line x1="96" y1="50" x2="91" y2="50"/>
+              <line x1="89" y1="73" x2="84.5" y2="70.5"/><line x1="73" y1="89" x2="70.5" y2="84.5"/>
+              <line x1="50" y1="96" x2="50" y2="91"/><line x1="27" y1="89" x2="29.5" y2="84.5"/>
+              <line x1="11" y1="73" x2="15.5" y2="70.5"/><line x1="4" y1="50" x2="9" y2="50"/>
+              <line x1="11" y1="27" x2="15.5" y2="29.5"/><line x1="27" y1="11" x2="29.5" y2="15.5"/>
+            </g>
+            <circle cx="50" cy="50" r="7" fill="none" stroke="#5a4019" stroke-width="2" opacity="0.5"/>
+            <circle cx="47" cy="47" r="2.4" fill="#fff3d6" opacity="0.85"/>
+          </svg>
         </div>
       </div>
-      <div class="vlt-field">
-        <label class="vlt-label" for="codeIn">Maxfiy kod</label>
-        <div class="vlt-slot">
-          <input id="codeIn" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Maxfiy kod"/>
-        </div>
-      </div>
+
+      <label class="vlt-lbl" for="codeIn">Maxfiy kod</label>
+      <div class="vlt-slot"><div class="vlt-slotin">
+        <input id="codeIn" type="password" inputmode="numeric" autocomplete="off" placeholder="••••" aria-label="Maxfiy kod">
+      </div></div>
+
       <div id="loginErr"></div>
+
       <div class="vlt-handlewrap">
-        <button type="button" class="vlt-handle" onclick="seyfLogin()" aria-label="Kirish">
-          <svg class="vlt-spokes" viewBox="0 0 100 100" aria-hidden="true">
-            <g stroke="#7a5a2c" stroke-width="4" stroke-linecap="round" opacity=".5">
-              <line x1="50" y1="8" x2="50" y2="22"/><line x1="50" y1="92" x2="50" y2="78"/><line x1="8" y1="50" x2="22" y2="50"/><line x1="92" y1="50" x2="78" y2="50"/>
-              <line x1="20" y1="20" x2="30" y2="30"/><line x1="80" y1="20" x2="70" y2="30"/><line x1="20" y1="80" x2="30" y2="70"/><line x1="80" y1="80" x2="70" y2="70"/>
+        <span class="vlt-hshadow"></span>
+        <button class="vlt-handle" onclick="seyfLogin()" aria-label="Kirish">
+          <svg viewBox="0 0 96 96" aria-hidden="true">
+            <g stroke="#5d4119" stroke-width="0.9" stroke-linecap="round" opacity="0.6">
+              <line x1="48" y1="4.5" x2="48" y2="9"/><line x1="91.5" y1="48" x2="87" y2="48"/>
+              <line x1="48" y1="91.5" x2="48" y2="87"/><line x1="4.5" y1="48" x2="9" y2="48"/>
+              <line x1="78.8" y1="17.2" x2="75.6" y2="20.4"/><line x1="78.8" y1="78.8" x2="75.6" y2="75.6"/>
+              <line x1="17.2" y1="78.8" x2="20.4" y2="75.6"/><line x1="17.2" y1="17.2" x2="20.4" y2="20.4"/>
+              <line x1="64.6" y1="8.3" x2="62.8" y2="12.4"/><line x1="87.7" y1="31.4" x2="83.6" y2="33.2"/>
+              <line x1="87.7" y1="64.6" x2="83.6" y2="62.8"/><line x1="64.6" y1="87.7" x2="62.8" y2="83.6"/>
+              <line x1="31.4" y1="87.7" x2="33.2" y2="83.6"/><line x1="8.3" y1="64.6" x2="12.4" y2="62.8"/>
+              <line x1="8.3" y1="31.4" x2="12.4" y2="33.2"/><line x1="31.4" y1="8.3" x2="33.2" y2="12.4"/>
             </g>
+            <circle cx="48" cy="48" r="40.5" fill="none" stroke="#fff3d6" stroke-width="0.8" opacity="0.4"/>
           </svg>
-          <span class="vlt-cap">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M7 10V7.5a5 5 0 0 1 10 0V10" stroke="#5a4220" stroke-width="2" stroke-linecap="round"/>
-              <rect x="4.5" y="10" width="15" height="10.5" rx="2.4" fill="#3c2c12"/>
-              <circle cx="12" cy="15" r="1.7" fill="#e8d7b8"/>
-              <rect x="11.1" y="15.4" width="1.8" height="3.4" rx=".9" fill="#e8d7b8"/>
-            </svg>
-          </span>
+          <span class="vlt-glyph" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 10V7.5a5 5 0 0 1 10 0V10" stroke="#5a4019" stroke-width="2" stroke-linecap="round"/><rect x="4.8" y="10" width="14.4" height="10" rx="2.2" fill="#4a3414"/><circle cx="12" cy="14.6" r="1.6" fill="#fff3d6"/><rect x="11.2" y="15" width="1.6" height="3.2" rx=".8" fill="#fff3d6"/></svg></span>
         </button>
         <div class="vlt-handle-lbl">Kirish</div>
       </div>
-      <div class="vlt-demo">
-        <div class="t">Demo kodlar</div>
-        <b>1234</b> direktor <span class="sep">·</span> <b>1111</b> kassir<br>
-        <b>2001</b> Jo'rabek (Jalinga) <span class="sep">·</span> <b>2003</b> Ulug'bek
-      </div>
+
+      <div class="vlt-demo">Demo kodlar:<br><b>1234</b> direktor &middot; <b>1111</b> kassir &middot; <b>2001</b> Jo'rabek (Jalinga) &middot; <b>2003</b> Ulug'bek</div>
     </div>
   </div>
-</div>
+</div></div>
   </div>
+
   <div id="appScr" style="display:none">
     <div class="hd">
       <button id="backBtn" class="gbtn" style="display:none" onclick="seyfBack()">&lsaquo;</button>
