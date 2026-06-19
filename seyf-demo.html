@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Seyf — namuna</title>
+<style>
+  :root{--bg:#EEF1F5;--sf:#fff;--sf2:#F1F3F6;--tx:#16181D;--tx2:#5B6472;--tx3:#9AA3B2;
+    --ln:#E6E9EF;--ln2:#D6DAE2;--info:#1F6FEB;--infobg:#E8F0FE;--gr:#0F9D58;--grbg:#E6F4EA;
+    --rd:#D83A34;--rdbg:#FCEBEA;--am:#B8770A;--ambg:#FBF0DC;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
+    font-size:14px;line-height:1.5;padding:14px;display:flex;justify-content:center}
+  #seyf{width:100%;max-width:420px;background:var(--sf);border:1px solid var(--ln);border-radius:16px;overflow:hidden}
+  .hd{display:flex;align-items:center;gap:9px;padding:14px 15px;border-bottom:1px solid var(--ln)}
+  .hd .t{font-weight:600;font-size:17px}
+  .chip{font-size:11px;padding:3px 10px;border-radius:999px;background:var(--sf2);color:var(--tx2)}
+  .view{padding:15px;min-height:440px}
+  .nav{display:flex;border-top:1px solid var(--ln)}
+  .nav button{flex:1;background:none;border:0;padding:10px 4px;font-size:11px;color:var(--tx2);
+    display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-family:inherit}
+  .nav button.on{color:var(--info)}
+  .nav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8}
+  .mc{background:var(--sf2);border-radius:10px;padding:12px 13px}
+  .mc .l{font-size:12px;color:var(--tx2)} .mc .v{font-size:21px;font-weight:600;font-family:var(--mono);margin-top:4px}
+  .pc{display:flex;align-items:center;gap:10px;padding:12px 13px;border:1px solid var(--ln);border-radius:11px;margin-bottom:8px;cursor:pointer}
+  .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+  .pc .nm{font-weight:600} .pc .bal{margin-left:auto;text-align:right;font-family:var(--mono);font-size:12.5px}
+  .op{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--ln)}
+  .bdg{font-size:10.5px;padding:2px 8px;border-radius:7px;white-space:nowrap;font-weight:600}
+  .amt{margin-left:auto;font-family:var(--mono);font-weight:600;white-space:nowrap;font-size:13px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .seg button{padding:12px;border:1.5px solid var(--ln2);background:var(--sf);border-radius:11px;font-weight:600;
+    font-size:13px;cursor:pointer;color:var(--tx2);font-family:inherit}
+  .seg button.on{border-color:var(--info);background:var(--infobg);color:var(--info)}
+  label.fl{display:block;font-size:12px;color:var(--tx2);margin:11px 0 5px}
+  input,select{width:100%;padding:11px 12px;border:1.5px solid var(--ln2);border-radius:11px;font-size:16px;
+    font-family:inherit;background:var(--sf);color:var(--tx)}
+  .pbtn{width:100%;padding:13px;border:0;border-radius:11px;background:var(--info);color:#fff;font-size:15px;
+    font-weight:600;cursor:pointer;font-family:inherit;margin-top:16px}
+  .gbtn{padding:6px 10px;border:1px solid var(--ln2);background:var(--sf);border-radius:9px;font-size:16px;cursor:pointer;font-family:inherit;color:var(--tx);line-height:1}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .led{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--ln);font-size:13px}
+  .led .rb{margin-left:auto;font-family:var(--mono);text-align:right}
+  .bi{background:var(--grbg);color:var(--gr)} .be{background:var(--rdbg);color:var(--rd)}
+  .bx{background:var(--infobg);color:var(--info)} .bt{background:var(--ambg);color:var(--am)}
+  .muted{color:var(--tx3)} .gr{color:var(--gr)} .rd{color:var(--rd)} .am{color:var(--am)}
+</style>
+</head>
+<body>
+<div id="seyf">
+  <div id="loginScr">
+    <div style="padding:46px 24px;text-align:center">
+      <div style="width:52px;height:52px;border-radius:14px;background:var(--infobg);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F6FEB" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+      <div style="font-size:21px;font-weight:600">Seyf</div>
+      <div style="font-size:12.5px;color:var(--tx3);margin-bottom:22px">Umumiy kassa boshqaruvi</div>
+      <input id="codeIn" type="text" inputmode="numeric" placeholder="kod: 1234" style="text-align:center;letter-spacing:4px;font-family:var(--mono)">
+      <div id="loginErr" style="color:var(--rd);font-size:12px;height:16px;margin-top:6px"></div>
+      <button class="pbtn" onclick="seyfLogin()">Kirish</button>
+      <div style="font-size:11.5px;color:var(--tx3);margin-top:16px;line-height:1.7">Demo kodlar:<br>1234 direktor · 1111 kassir<br>2001 Jo'rabek (Jalinga) · 2003 Ulug'bek (club)</div>
+    </div>
+  </div>
+  <div id="appScr" style="display:none">
+    <div class="hd">
+      <button id="backBtn" class="gbtn" style="display:none" onclick="seyfBack()">&lsaquo;</button>
+      <span class="t" id="hdTitle">Seyf</span>
+      <span class="chip" id="roleChip" style="margin-left:auto"></span>
+    </div>
+    <div class="view" id="view"></div>
+    <div class="nav">
+      <button id="nav-dash" onclick="seyfGo('dash')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Panel</button>
+      <button id="nav-ops" onclick="seyfGo('ops')"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Amallar</button>
+      <button id="nav-new" onclick="seyfGo('new')"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Yangi</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var P=[
+    {code:'impulse',name:'Impulse',color:'#BA7517',UZS:620000000,USD:31500},
+    {code:'jalinga',name:'Jalinga',color:'#1D9E75',UZS:214000000,USD:28900},
+    {code:'mfaktor_school',name:'Mfaktor maktab',color:'#378ADD',UZS:268500000,USD:14000},
+    {code:'mfaktor_club',name:'Mfaktor club',color:'#7F77DD',UZS:98000000,USD:7200},
+    {code:'mlp',name:'My Life Planner',color:'#D4537E',UZS:40000000,USD:4800}
+  ];
+  var OPS=[
+    {type:'income',proj:'mfaktor_school',cur:'UZS',amt:18000000,cat:"Mijoz to'lovi",note:'Trening to\'lovi',date:'bugun 14:20'},
+    {type:'expense',proj:'impulse',cur:'UZS',amt:25000000,cat:'Ijara',note:'Iyun ijara',date:'bugun 12:05'},
+    {type:'transfer',proj:'impulse',counter:'mfaktor_club',cur:'UZS',amt:30000000,loan:true,note:'',date:'bugun 09:48'}
+  ];
+  var ROLES={'1234':{role:'director'},'1111':{role:'cashier'},
+    '2001':{role:'owner',sc:'jalinga'},'2002':{role:'owner',sc:'mfaktor_school'},
+    '2003':{role:'owner',sc:'mfaktor_club'},'2004':{role:'owner',sc:'mlp'}};
+  var ROLE_UZ={director:'Direktor',cashier:'Kassir',owner:'Loyiha egasi'};
+  var BCLS={income:'bi',expense:'be',exchange:'bx',transfer:'bt'};
+  var LAB={income:'Kirim',expense:'Chiqim',exchange:'Ayirboshlash',transfer:"O'tkazma"};
+  var st={role:null,sc:null,view:'dash',curProj:null,newType:'income'};
+  var $=function(id){return document.getElementById(id);};
+  function grp(n){n=Math.round(n);var s=Math.abs(n).toLocaleString('en-US').replace(/,/g,' ');return (n<0?'−':'')+s;}
+  function fmt(cur,n){return cur==='USD'?('$'+grp(n)):(grp(n)+" so'm");}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function P_(c){for(var i=0;i<P.length;i++)if(P[i].code===c)return P[i];return null;}
+  function visible(){return st.role==='owner'?P.filter(function(p){return p.code===st.sc;}):P.slice();}
+  function canWrite(){return st.role==='director'||st.role==='cashier';}
+  function opVisible(o){if(st.role!=='owner')return true;return o.proj===st.sc||o.counter===st.sc;}
+  window.seyfLogin=function(){
+    var c=($('codeIn').value||'').trim();var r=ROLES[c];
+    if(!r){$('loginErr').textContent='Kod noto\'g\'ri';return;}
+    st.role=r.role;st.sc=r.sc||null;st.view='dash';
+    $('loginScr').style.display='none';$('appScr').style.display='block';
+    $('roleChip').textContent=ROLE_UZ[st.role];
+    $('nav-new').style.display=canWrite()?'flex':'none';seyfGo('dash');};
+  window.seyfGo=function(v){st.view=v;render();};
+  window.seyfBack=function(){seyfGo('dash');};
+  function setNav(){['dash','ops','new'].forEach(function(v){var b=$('nav-'+v);if(b)b.classList.toggle('on',st.view===v);});}
+  function render(){
+    var v=st.view;$('backBtn').style.display=(v==='project'||v==='new')?'block':'none';
+    $('hdTitle').textContent={dash:'Panel',ops:'Amallar',new:'Yangi amal',project:(P_(st.curProj)||{}).name||'Loyiha'}[v]||'Seyf';
+    setNav();
+    if(v==='dash')renderDash();else if(v==='ops')renderOps();else if(v==='new')renderNew();else if(v==='project')renderProject();}
+  function renderDash(){
+    var vis=visible();var tu=0,td=0;vis.forEach(function(p){tu+=p.UZS;td+=p.USD;});
+    var h='<div class="row2" style="margin-bottom:14px"><div class="mc"><div class="l">Jami — so\'m</div><div class="v">'+grp(tu)+'</div></div>'+
+      '<div class="mc"><div class="l">Jami — dollar</div><div class="v">$'+grp(td)+'</div></div></div>';
+    h+='<div style="font-size:12px;color:var(--tx2);margin:6px 0 8px">Loyihalar</div>';
+    vis.forEach(function(p){h+='<div class="pc" onclick="seyfProj(\''+p.code+'\')"><span class="dot" style="background:'+p.color+'"></span>'+
+      '<span class="nm">'+esc(p.name)+'</span><span class="bal">'+grp(p.UZS)+'<br><span class="muted">$'+grp(p.USD)+'</span></span>'+
+      '<span class="muted" style="font-size:18px">&rsaquo;</span></div>';});
+    if(canWrite())h+='<button class="pbtn" onclick="seyfGo(\'new\')" style="margin-top:6px">+ Yangi amal</button>';
+    h+='<div style="font-size:12px;color:var(--tx2);margin:18px 0 6px">So\'nggi amallar</div>';
+    var rec=OPS.filter(opVisible).slice(0,8);
+    if(!rec.length)h+='<div class="muted" style="padding:14px 0">Amal yo\'q</div>';
+    rec.forEach(function(o){h+=opRow(o);});$('view').innerHTML=h;}
+  function opRow(o){
+    var sign=o.type==='income'?'+':(o.type==='expense'?'−':'');
+    var amtTxt=o.type==='exchange'?('−'+fmt(o.sellCur,o.sellAmt)+' → +'+fmt(o.buyCur,o.buyAmt)):(sign+fmt(o.cur,o.amt));
+    var sub=(P_(o.proj)||{}).name||'';if(o.counter)sub+=' → '+((P_(o.counter)||{}).name||'');if(o.cat)sub+=' · '+o.cat;
+    var cl=o.type==='income'?'gr':(o.type==='expense'?'rd':'');
+    return '<div class="op"><span class="bdg '+BCLS[o.type]+'">'+LAB[o.type]+'</span>'+
+      '<div style="min-width:0"><div>'+esc(o.note||o.cat||sub)+(o.loan?' <span class="am" style="font-size:10px">qarz</span>':'')+'</div>'+
+      '<div style="font-size:11.5px" class="muted">'+esc(sub)+' · '+esc(o.date)+'</div></div>'+
+      '<span class="amt '+cl+'">'+amtTxt+'</span></div>';}
+  function renderOps(){
+    var h='<div style="display:flex;gap:6px;margin-bottom:12px">';
+    ['Kunlik','Haftalik','Oylik','Choraklik'].forEach(function(x,i){h+='<span style="font-size:11.5px;padding:5px 9px;border-radius:8px;border:1px solid var(--ln2);'+
+      (i===2?'background:var(--infobg);color:var(--info)':'color:var(--tx2)')+'">'+x+'</span>';});h+='</div>';
+    var list=OPS.filter(opVisible);if(!list.length)h+='<div class="muted" style="padding:20px 0;text-align:center">Amal yo\'q</div>';
+    list.forEach(function(o){h+=opRow(o);});$('view').innerHTML=h;}
+  function renderProject(){
+    var p=P_(st.curProj);if(!p){seyfGo('dash');return;}
+    var h='<div class="row2" style="margin-bottom:6px"><div class="mc"><div class="l">so\'m</div><div class="v">'+grp(p.UZS)+'</div></div>'+
+      '<div class="mc"><div class="l">dollar</div><div class="v">$'+grp(p.USD)+'</div></div></div>';
+    ['UZS','USD'].forEach(function(cur){
+      h+='<div style="font-size:12px;color:var(--tx2);margin:16px 0 4px">'+(cur==='UZS'?'So\'m':'Dollar')+' daftari</div>';
+      var run=p[cur];var rows=OPS.filter(function(o){return opTouches(o,p.code,cur);});
+      if(!rows.length){h+='<div class="muted" style="padding:8px 0;font-size:13px">Yozuv yo\'q</div>';return;}
+      rows.forEach(function(o){var d=delta(o,p.code,cur);
+        h+='<div class="led"><span>'+LAB[o.type]+'</span><span class="muted" style="font-size:12px">'+esc(o.note||o.cat||'')+'</span>'+
+          '<span class="rb"><span class="'+(d>=0?'gr':'rd')+'">'+(d>=0?'+':'−')+fmt(cur,Math.abs(d))+'</span>'+
+          '<br><span class="muted" style="font-size:12px">'+fmt(cur,run)+'</span></span></div>';run-=d;});});
+    $('view').innerHTML=h;}
+  function opTouches(o,code,cur){
+    if(o.type==='exchange')return o.proj===code&&(o.sellCur===cur||o.buyCur===cur);
+    if(o.type==='transfer')return o.cur===cur&&(o.proj===code||o.counter===code);
+    return o.proj===code&&o.cur===cur;}
+  function delta(o,code,cur){
+    if(o.type==='income')return o.amt;if(o.type==='expense')return -o.amt;
+    if(o.type==='transfer')return o.proj===code?-o.amt:o.amt;
+    if(o.type==='exchange')return o.sellCur===cur?-o.sellAmt:o.buyAmt;return 0;}
+  window.seyfProj=function(c){st.curProj=c;seyfGo('project');};
+  window.seyfType=function(t){st.newType=t;renderNew();};
+  function projOpts(sel){return P.map(function(p){return '<option value="'+p.code+'"'+(p.code===sel?' selected':'')+'>'+esc(p.name)+'</option>';}).join('');}
+  function curOpts(sel){return ['UZS','USD'].map(function(c){return '<option value="'+c+'"'+(c===sel?' selected':'')+'>'+(c==='UZS'?'so\'m':'dollar')+'</option>';}).join('');}
+  function renderNew(){
+    var t=st.newType;var h='<div class="seg">';
+    ['income','expense','exchange','transfer'].forEach(function(x){h+='<button class="'+(x===t?'on':'')+'" onclick="seyfType(\''+x+'\')">'+LAB[x]+'</button>';});h+='</div>';
+    if(t==='transfer'){h+='<label class="fl">Qaysi loyihadan</label><select id="f_from">'+projOpts('impulse')+'</select>';
+      h+='<label class="fl">Qaysi loyihaga</label><select id="f_to">'+projOpts('mfaktor_club')+'</select>';}
+    else{h+='<label class="fl">Loyiha</label><select id="f_proj">'+projOpts('impulse')+'</select>';}
+    if(t==='exchange'){
+      h+='<div class="row2"><div><label class="fl">Sotiladi</label><select id="f_sc">'+curOpts('USD')+'</select></div>'+
+         '<div><label class="fl">Miqdor</label><input id="f_sa" inputmode="decimal" placeholder="0" oninput="seyfGrp(this)"></div></div>';
+      h+='<div class="row2"><div><label class="fl">Olinadi</label><select id="f_bc">'+curOpts('UZS')+'</select></div>'+
+         '<div><label class="fl">Miqdor</label><input id="f_ba" inputmode="decimal" placeholder="0" oninput="seyfGrp(this)"></div></div>';}
+    else{h+='<label class="fl">Valyuta</label><select id="f_cur">'+curOpts('UZS')+'</select>';
+      h+='<label class="fl">Summa</label><input id="f_amt" inputmode="decimal" placeholder="0" oninput="seyfGrp(this)">';}
+    if(t==='income'||t==='expense'){var cats=t==='income'?["Mijoz to'lovi","Avans","Ijara tushumi","Boshqa kirim"]:["Oylik / ish haqi","Ijara","Marketing","Ta'minot / xarid","Boshqa chiqim"];
+      h+='<label class="fl">Modda</label><select id="f_cat">'+cats.map(function(c){return '<option>'+esc(c)+'</option>';}).join('')+'</select>';}
+    if(t==='transfer')h+='<label class="fl" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="f_loan" style="width:auto"> Qarz sifatida</label>';
+    h+='<label class="fl">Izoh</label><input id="f_note" placeholder="ixtiyoriy">';
+    h+='<button class="pbtn" onclick="seyfSave()">Saqlash — '+LAB[t]+'</button>';$('view').innerHTML=h;}
+  window.seyfGrp=function(inp){var v=(inp.value||'').replace(/[^\d.]/g,'');var pr=v.split('.');pr[0]=pr[0].replace(/\B(?=(\d{3})+(?!\d))/g,' ');inp.value=pr.join('.');};
+  function num(id){var e=$(id);if(!e)return 0;return parseFloat((e.value||'').replace(/ /g,''))||0;}
+  window.seyfSave=function(){
+    var t=st.newType,note=($('f_note')&&$('f_note').value||'').trim();var o={type:t,note:note,date:'hozir'};
+    if(t==='income'||t==='expense'){o.proj=$('f_proj').value;o.cur=$('f_cur').value;o.amt=num('f_amt');o.cat=$('f_cat').value;
+      if(o.amt<=0)return;P_(o.proj)[o.cur]+=(t==='income'?o.amt:-o.amt);}
+    else if(t==='transfer'){o.proj=$('f_from').value;o.counter=$('f_to').value;o.cur=$('f_cur').value;o.amt=num('f_amt');o.loan=$('f_loan').checked;
+      if(o.amt<=0||o.proj===o.counter)return;P_(o.proj)[o.cur]-=o.amt;P_(o.counter)[o.cur]+=o.amt;}
+    else if(t==='exchange'){o.proj=$('f_proj').value;o.sellCur=$('f_sc').value;o.buyCur=$('f_bc').value;o.sellAmt=num('f_sa');o.buyAmt=num('f_ba');
+      if(o.sellAmt<=0||o.buyAmt<=0||o.sellCur===o.buyCur)return;var pp=P_(o.proj);pp[o.sellCur]-=o.sellAmt;pp[o.buyCur]+=o.buyAmt;}
+    OPS.unshift(o);seyfGo('ops');};
+  $('codeIn').addEventListener('keydown',function(e){if(e.key==='Enter')seyfLogin();});
+})();
+</script>
+</body>
+</html>
