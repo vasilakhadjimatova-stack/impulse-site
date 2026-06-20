@@ -472,6 +472,9 @@
       '<span style="font-family:var(--serif);font-size:21px;color:var(--goldl)">'+esc(p.name)+'</span></div>';
     h+='<div class="row2" style="margin-bottom:4px"><div class="mc"><div class="l">so\'m</div><div class="v">'+grp(p.UZS)+'</div></div>'+
       '<div class="mc"><div class="l">dollar</div><div class="v">$'+grp(p.USD)+'</div></div></div>';
+    if(canWrite())h+='<div class="row2" style="margin:12px 0 4px">'+
+      '<button onclick="seyfAdd(\'income\')" style="padding:12px;border:1px solid rgba(91,214,139,.4);background:var(--grbg);color:var(--gr);border-radius:12px;font-weight:600;font-family:inherit;font-size:14px;cursor:pointer">+ Kirim</button>'+
+      '<button onclick="seyfAdd(\'expense\')" style="padding:12px;border:1px solid rgba(242,128,122,.4);background:var(--rdbg);color:var(--rd);border-radius:12px;font-weight:600;font-family:inherit;font-size:14px;cursor:pointer">− Chiqim</button></div>';
     ['UZS','USD'].forEach(function(cur){
       h+='<div class="sl">'+(cur==='UZS'?'So\'m':'Dollar')+' daftari</div>';
       var run=p[cur];var rows=OPS.filter(function(o){return opTouches(o,p.code,cur);});
@@ -491,15 +494,16 @@
     if(o.type==='exchange')return o.sellCur===cur?-o.sellAmt:o.buyAmt;return 0;}
   window.seyfProj=function(c){st.curProj=c;seyfGo('project');};
   window.seyfType=function(t){st.newType=t;renderNew();};
+  window.seyfAdd=function(t){st.newType=t;st.newProj=st.curProj;seyfGo('new');};
   function projOpts(sel){return P.map(function(p){return '<option value="'+p.code+'"'+(p.code===sel?' selected':'')+'>'+esc(p.name)+'</option>';}).join('');}
   function curOpts(sel){return ['UZS','USD'].map(function(c){return '<option value="'+c+'"'+(c===sel?' selected':'')+'>'+(c==='UZS'?'so\'m':'dollar')+'</option>';}).join('');}
   function renderNew(){
-    var t=st.newType;var h='<div class="seg">';
+    var t=st.newType;var preProj=st.newProj;st.newProj=null;var h='<div class="seg">';
     ['income','expense','exchange','transfer'].forEach(function(x){h+='<button class="'+(x===t?'on':'')+'" onclick="seyfType(\''+x+'\')">'+LAB[x]+'</button>';});h+='</div>';
     if(t==='transfer'){h+='<label class="fl">Qarz beruvchi loyiha (pul berdi)</label><select id="f_from" onchange="seyfLoanRel()">'+projOpts('impulse')+'</select>';
       h+='<label class="fl">Qarz oluvchi loyiha (qarzdor)</label><select id="f_to" onchange="seyfLoanRel()">'+projOpts('mfaktor_club')+'</select>';
       h+='<div id="loanRel"></div>';}
-    else{h+='<label class="fl">Loyiha</label><select id="f_proj">'+projOpts('impulse')+'</select>';}
+    else{h+='<label class="fl">Loyiha</label><select id="f_proj">'+projOpts(preProj||'impulse')+'</select>';}
     if(t==='exchange'){
       h+='<div class="row2"><div><label class="fl">Sotiladi</label><select id="f_sc">'+curOpts('USD')+'</select></div>'+
          '<div><label class="fl">Miqdor</label><input id="f_sa" inputmode="decimal" placeholder="0" oninput="seyfGrp(this)"></div></div>';
