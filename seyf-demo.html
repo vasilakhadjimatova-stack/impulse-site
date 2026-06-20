@@ -480,9 +480,10 @@
       '<span style="font-family:var(--serif);font-size:21px;color:var(--goldl)">'+esc(p.name)+'</span></div>';
     h+='<div class="row2" style="margin-bottom:4px"><div class="mc"><div class="l">so\'m</div><div class="v">'+grp(p.UZS)+'</div></div>'+
       '<div class="mc"><div class="l">dollar</div><div class="v">$'+grp(p.USD)+'</div></div></div>';
-    if(canWrite())h+='<div class="row2" style="margin:12px 0 4px">'+
-      '<button onclick="seyfAdd(\'income\')" style="padding:12px;border:1px solid rgba(91,214,139,.4);background:var(--grbg);color:var(--gr);border-radius:12px;font-weight:600;font-family:inherit;font-size:14px;cursor:pointer">+ Kirim</button>'+
-      '<button onclick="seyfAdd(\'expense\')" style="padding:12px;border:1px solid rgba(242,128,122,.4);background:var(--rdbg);color:var(--rd);border-radius:12px;font-weight:600;font-family:inherit;font-size:14px;cursor:pointer">− Chiqim</button></div>';
+    if(canWrite())h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0 4px">'+
+      '<button onclick="seyfAdd(\'income\')" style="padding:11px 6px;border:1px solid rgba(91,214,139,.4);background:var(--grbg);color:var(--gr);border-radius:12px;font-weight:600;font-family:inherit;font-size:13.5px;cursor:pointer">+ Kirim</button>'+
+      '<button onclick="seyfAdd(\'expense\')" style="padding:11px 6px;border:1px solid rgba(242,128,122,.4);background:var(--rdbg);color:var(--rd);border-radius:12px;font-weight:600;font-family:inherit;font-size:13.5px;cursor:pointer">− Chiqim</button>'+
+      '<button onclick="seyfAdd(\'transfer\')" style="padding:11px 6px;border:1px solid rgba(229,199,107,.45);background:var(--ambg);color:var(--am);border-radius:12px;font-weight:600;font-family:inherit;font-size:13.5px;cursor:pointer">Qarz</button></div>';
     ['UZS','USD'].forEach(function(cur){
       h+='<div class="sl">'+(cur==='UZS'?'So\'m':'Dollar')+' daftari</div>';
       var run=p[cur];var rows=OPS.filter(function(o){return opTouches(o,p.code,cur);});
@@ -508,8 +509,9 @@
   function renderNew(){
     var t=st.newType;var preProj=st.newProj;st.newProj=null;var h='<div class="seg">';
     ['income','expense','exchange','transfer'].forEach(function(x){h+='<button class="s-'+x+(x===t?' on':'')+'" onclick="seyfType(\''+x+'\')">'+LAB[x]+'</button>';});h+='</div>';
-    if(t==='transfer'){h+='<label class="fl">Qarz beruvchi loyiha (pul berdi)</label><select id="f_from" onchange="seyfLoanRel()">'+projOpts('impulse')+'</select>';
-      h+='<label class="fl">Qarz oluvchi loyiha (qarzdor)</label><select id="f_to" onchange="seyfLoanRel()">'+projOpts('mfaktor_club')+'</select>';
+    if(t==='transfer'){var fromD=preProj||'impulse';var toD=(fromD==='mfaktor_club')?'impulse':'mfaktor_club';
+      h+='<label class="fl">Qaysi loyiha beradi (pul)</label><select id="f_from" onchange="seyfLoanRel()">'+projOpts(fromD)+'</select>';
+      h+='<label class="fl">Qaysi loyiha oladi (pul)</label><select id="f_to" onchange="seyfLoanRel()">'+projOpts(toD)+'</select>';
       h+='<div id="loanRel"></div>';}
     else{h+='<label class="fl">Loyiha</label><select id="f_proj">'+projOpts(preProj||'impulse')+'</select>';}
     if(t==='exchange'){
@@ -520,7 +522,7 @@
     else{h+='<label class="fl">Valyuta</label><select id="f_cur" onchange="seyfCur()">'+curOpts('UZS')+'</select>';
       h+='<label class="fl">Summa</label>'+
          '<div class="amtwrap"><span class="amtpre" id="amtPre">$</span><span class="amtsuf" id="amtSuf">so\'m</span>'+
-         '<input id="f_amt" inputmode="decimal" placeholder="0" oninput="seyfGrp(this);seyfEq()"></div>'+
+         '<input id="f_amt" inputmode="decimal" placeholder="0" oninput="seyfGrp(this);seyfEq();seyfLoanRel()"></div>'+
          '<div id="rateRow" style="display:none"><label class="fl">Kurs — 1$ necha so\'m?</label>'+
          '<input id="f_rate" inputmode="decimal" placeholder="12 850" oninput="seyfGrp(this);seyfEq()">'+
          '<div class="amteq" id="amtEq"></div></div>';}
@@ -535,12 +537,29 @@
     var box=$('loanRel');if(!box)return;
     var a=($('f_from')||{}).value,b=($('f_to')||{}).value;
     if(!a||!b||a===b){box.innerHTML='';return;}
-    var rel=DEBTS.filter(function(d){return dRem(d)>0&&((d.lender===a&&d.borrower===b)||(d.lender===b&&d.borrower===a));});
-    if(!rel.length){box.innerHTML='<div class="rel-box muted">Bu ikki loyiha o\'rtasida hozir ochiq qarz yo\'q.</div>';return;}
-    var html='<div class="rel-box"><div class="rel-t">Mavjud o\'zaro qarzlar (qoldiq)</div>';
-    rel.forEach(function(d){var bb=(P_(d.borrower)||{}).name||d.borrower,ll=(P_(d.lender)||{}).name||d.lender;
-      html+='<div class="rel-row"><span><b style="color:var(--rd)">'+esc(bb)+'</b> → '+esc(ll)+'</span><span class="rel-amt">'+fmt(d.cur,dRem(d))+'</span></div>';});
-    html+='</div>';box.innerHTML=html;
+    var cur=($('f_cur')||{}).value||'UZS';
+    var amt=parseFloat((($('f_amt')||{}).value||'').replace(/ /g,''))||0;
+    var An=(P_(a)||{}).name||a,Bn=(P_(b)||{}).name||b;
+    // teskari qarz: a (beruvchi) aslida b'ga qarzdor edi -> bu TO'LOV
+    var rev=DEBTS.filter(function(d){return d.cur===cur&&dRem(d)>0&&d.lender===b&&d.borrower===a;});
+    var same=DEBTS.filter(function(d){return d.cur===cur&&dRem(d)>0&&d.lender===a&&d.borrower===b;});
+    var html='';
+    if(rev.length){
+      var rem=0;rev.forEach(function(d){rem+=dRem(d);});var after=Math.max(0,rem-amt);
+      html='<div class="rel-box" style="border-color:rgba(91,214,139,.45)">'+
+        '<div class="rel-t" style="color:var(--gr)">✓ Qarz qaytarish</div>'+
+        '<div class="rel-row"><span>'+esc(An)+' '+esc(Bn)+'ga qarzdor edi</span><span class="rel-amt">'+fmt(cur,rem)+'</span></div>'+
+        (amt>0?('<div class="rel-row"><span>To\'lovdan keyin qoldiq</span><span class="rel-amt" style="color:'+(after<=0?'var(--gr)':'var(--am)')+'">'+fmt(cur,after)+(after<=0?' ✓':'')+'</span></div>'):'')+
+        '<div style="font-size:11px;color:var(--tx3);margin-top:5px">Kiritilgan summa avtomatik shu qarzdan ayriladi.</div></div>';
+    } else if(same.length){
+      var rem2=0;same.forEach(function(d){rem2+=dRem(d);});
+      html='<div class="rel-box"><div class="rel-t">Mavjud qarz — yana qo\'shiladi</div>'+
+        '<div class="rel-row"><span><b style="color:var(--rd)">'+esc(Bn)+'</b> → '+esc(An)+' qarzdor</span><span class="rel-amt">'+fmt(cur,rem2)+'</span></div>'+
+        (amt>0?('<div class="rel-row"><span>Yangi qoldiq</span><span class="rel-amt">'+fmt(cur,rem2+amt)+'</span></div>'):'')+'</div>';
+    } else {
+      html='<div class="rel-box muted">Yangi qarz: <b style="color:var(--rd)">'+esc(Bn)+'</b>, '+esc(An)+'ga qarzdor bo\'ladi.</div>';
+    }
+    box.innerHTML=html;
   };
   window.seyfCur=function(){
     var sel=$('f_cur');if(!sel)return;var usd=sel.value==='USD';
@@ -740,9 +759,18 @@
     var t=st.newType,note=($('f_note')&&$('f_note').value||'').trim();var o={type:t,note:note,date:'hozir'};
     if(t==='income'||t==='expense'){o.proj=$('f_proj').value;o.cur=$('f_cur').value;o.amt=num('f_amt');o.cat=$('f_cat').value;
       if(o.amt<=0)return;P_(o.proj)[o.cur]+=(t==='income'?o.amt:-o.amt);}
-    else if(t==='transfer'){o.proj=$('f_from').value;o.counter=$('f_to').value;o.cur=$('f_cur').value;o.amt=num('f_amt');o.loan=true;
-      if(o.amt<=0||o.proj===o.counter)return;P_(o.proj)[o.cur]-=o.amt;P_(o.counter)[o.cur]+=o.amt;
-      DEBTS.push({id:debtSeq++,lender:o.proj,borrower:o.counter,cur:o.cur,amount:o.amt,note:note,date:'hozir',pays:[]});}
+    else if(t==='transfer'){var from=$('f_from').value,to=$('f_to').value,cur=$('f_cur').value,amt=num('f_amt');
+      if(amt<=0||from===to)return;
+      o.proj=from;o.counter=to;o.cur=cur;o.amt=amt;o.loan=true;
+      var pf=P_(from),pt=P_(to);if(pf)pf[cur]-=amt;if(pt)pt[cur]+=amt;
+      var rev=DEBTS.filter(function(d){return d.cur===cur&&dRem(d)>0&&d.lender===to&&d.borrower===from;}).sort(function(x,y){return x.id-y.id;});
+      if(rev.length){var left=amt;
+        for(var k=0;k<rev.length&&left>0;k++){var r=rev[k];var pay=Math.min(left,dRem(r));if(pay>0){r.pays.push({amt:pay,date:'hozir'});left-=pay;}}
+        if(left>0)DEBTS.push({id:debtSeq++,lender:from,borrower:to,cur:cur,amount:left,note:'ortiqcha to\'lov',date:'hozir',pays:[]});
+        o.note=(note?note+' · ':'')+'qarz qaytarildi';o.repay=true;
+      } else {
+        DEBTS.push({id:debtSeq++,lender:from,borrower:to,cur:cur,amount:amt,note:note,date:'hozir',pays:[]});
+      }}
     else if(t==='exchange'){o.proj=$('f_proj').value;o.sellCur=$('f_sc').value;o.buyCur=$('f_bc').value;o.sellAmt=num('f_sa');o.buyAmt=num('f_ba');
       if(o.sellAmt<=0||o.buyAmt<=0||o.sellCur===o.buyCur)return;var pp=P_(o.proj);pp[o.sellCur]-=o.sellAmt;pp[o.buyCur]+=o.buyAmt;}
     OPS.unshift(o);seyfGo('ops');};
