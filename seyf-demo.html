@@ -191,6 +191,15 @@
   .dcard-meta .pd{color:var(--gr);font-weight:500}
   .dcard.done{opacity:.62}
   .dcard.done .dcard-amt{color:var(--tx2);font-size:16px}
+  .wrow{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1px solid var(--ln);border-radius:12px;
+    margin-bottom:8px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+  .wic{width:38px;height:38px;border-radius:10px;background:var(--infobg);color:var(--goldl);border:1px solid var(--ln);
+    flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .wic svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7}
+  .wnm{font-weight:500;font-size:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .wnum{font-family:var(--mono);font-size:10.5px;color:var(--tx3)}
+  .wty{font-size:11px;color:var(--tx3);margin-top:2px}
+  .wbal{margin-left:auto;text-align:right;font-family:var(--num);font-weight:600;font-size:15px;color:var(--goldl);white-space:nowrap}
   .ai-wrap{text-align:center;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0}
   .ai-orb{position:relative;width:160px;height:160px;margin:6px auto 12px;cursor:pointer}
   .ai-orb .core{position:absolute;inset:46px;border-radius:50%;z-index:2;display:flex;align-items:center;justify-content:center;
@@ -388,7 +397,14 @@
 <script>
 (function(){
   var P=[
-    {code:'impulse',name:'Impulse',color:'#D9A441',logo:'seyf-logos/impulse.jpg',UZS:620000000,USD:31500},
+    {code:'impulse',name:'Impulse',color:'#D9A441',logo:'seyf-logos/impulse.jpg',UZS:620000000,USD:31500,
+      wallets:[
+        {name:'Naqd kassa',type:'cash',cur:'UZS',bal:120000000},
+        {name:'Bank hisobi',type:'bank',cur:'UZS',bal:400000000,num:'2026 8901 **** 5521'},
+        {name:'Uzcard',type:'card',cur:'UZS',bal:100000000,num:'8600 **** **** 1234'},
+        {name:'Naqd dollar',type:'cash',cur:'USD',bal:6500},
+        {name:'Valyuta hisobi',type:'bank',cur:'USD',bal:25000,num:'2026 8901 **** 7790'}
+      ]},
     {code:'jalinga',name:'Jalinga',color:'#43C99B',logo:'seyf-logos/jalinga.jpg',UZS:214000000,USD:28900},
     {code:'mfaktor_school',name:'Mfaktor maktab',color:'#5EA0F0',logo:'seyf-logos/mfaktor_school.jpg',UZS:268500000,USD:14000},
     {code:'mfaktor_club',name:'Mfaktor club',color:'#A78BFA',logo:'seyf-logos/mfaktor_club.png',UZS:98000000,USD:7200},
@@ -501,6 +517,19 @@
       '<button onclick="seyfAdd(\'income\')" style="padding:11px 6px;border:1px solid rgba(91,214,139,.4);background:var(--grbg);color:var(--gr);border-radius:12px;font-weight:600;font-family:inherit;font-size:13.5px;cursor:pointer">+ Kirim</button>'+
       '<button onclick="seyfAdd(\'expense\')" style="padding:11px 6px;border:1px solid rgba(242,128,122,.4);background:var(--rdbg);color:var(--rd);border-radius:12px;font-weight:600;font-family:inherit;font-size:13.5px;cursor:pointer">− Chiqim</button>'+
       '<button onclick="seyfAdd(\'transfer\')" style="padding:11px 6px;border:1px solid rgba(229,199,107,.45);background:var(--ambg);color:var(--am);border-radius:12px;font-weight:600;font-family:inherit;font-size:13.5px;cursor:pointer">Qarz</button></div>';
+    if(p.wallets&&p.wallets.length){
+      var WIC={cash:'<svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>',
+        bank:'<svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M4 10v9h16v-9M9 19v-5M15 19v-5"/></svg>',
+        card:'<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>'};
+      var WTY={cash:'naqd',bank:'bank hisobi',card:'karta'};
+      h+='<div class="sl">Hamyonlar (hisob raqam · karta · naqd)</div>';
+      p.wallets.forEach(function(w){
+        h+='<div class="wrow"><span class="wic">'+(WIC[w.type]||WIC.cash)+'</span>'+
+          '<div style="min-width:0"><div class="wnm">'+esc(w.name)+(w.num?(' <span class="wnum">'+esc(w.num)+'</span>'):'')+'</div>'+
+          '<div class="wty">'+(WTY[w.type]||w.type)+' · '+(w.cur==='USD'?'dollar':'so\'m')+'</div></div>'+
+          '<span class="wbal">'+fmt(w.cur,w.bal)+'</span></div>';
+      });
+    }
     ['UZS','USD'].forEach(function(cur){
       h+='<div class="sl">'+(cur==='UZS'?'So\'m':'Dollar')+' daftari</div>';
       var run=p[cur];var rows=OPS.filter(function(o){return opTouches(o,p.code,cur);});
