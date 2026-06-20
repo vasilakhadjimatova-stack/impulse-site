@@ -354,6 +354,23 @@
 @keyframes vltSpin{0%{transform:rotate(0)}100%{transform:rotate(150deg)}}
 .vlt-handlewrap,.vlt-dialwrap{perspective:600px}
 @media (prefers-reduced-motion:reduce){.vlt-gleam{animation:none;opacity:.35}.vlt-handle.turning{animation:none}.vlt-hub.spin{animation:none}}
+/* ===== Kreativ «Kirish» — halo + ripple + qulf ochilishi ===== */
+.vlt-handlewrap{position:relative}
+.vlt-ready,.vlt-rip{position:absolute;left:50%;top:48px;width:96px;height:96px;border-radius:50%;
+  transform:translate(-50%,-50%);pointer-events:none;z-index:0}
+.vlt-ready{border:1.5px solid rgba(201,169,110,.4);animation:vltReady 2.6s ease-out infinite}
+@keyframes vltReady{0%{transform:translate(-50%,-50%) scale(.92);opacity:.55}70%{opacity:0}100%{transform:translate(-50%,-50%) scale(1.55);opacity:0}}
+.vlt-rip{border:2px solid rgba(201,169,110,.7);opacity:0}
+.vlt-handlewrap.live .vlt-rip.r1{animation:vltRip .62s ease-out forwards}
+.vlt-handlewrap.live .vlt-rip.r2{animation:vltRip .62s ease-out .13s forwards}
+@keyframes vltRip{0%{transform:translate(-50%,-50%) scale(.55);opacity:.85}100%{transform:translate(-50%,-50%) scale(2);opacity:0}}
+.vlt-glyph{transition:opacity .25s ease}
+.vlt-glyph-open{opacity:0}
+.vlt-handle.turning .vlt-glyph{opacity:0}
+.vlt-handle.turning .vlt-glyph-open{opacity:1}
+.vlt-handle.turning{animation:vltTurn .66s cubic-bezier(.45,.05,.2,1) forwards}
+@keyframes vltTurn{0%{transform:rotate(0) scale(1)}22%{transform:rotate(-14deg) scale(.93)}100%{transform:rotate(296deg) scale(1)}}
+@media (prefers-reduced-motion:reduce){.vlt-ready{animation:none;opacity:.3}.vlt-handlewrap.live .vlt-rip{animation:none}}
 </style>
 
 <h2 class="vlt-sr">Seyf umumiy kassa boshqaruvi — maxfiy kod bilan kirish</h2>
@@ -432,6 +449,7 @@
 
       <div class="vlt-handlewrap">
         <span class="vlt-hshadow"></span>
+        <span class="vlt-ready"></span><span class="vlt-rip r1"></span><span class="vlt-rip r2"></span>
         <button class="vlt-handle" onclick="seyfTurn(this)" aria-label="Kirish">
           <span class="vlt-gleam"></span>
           <svg viewBox="0 0 96 96" aria-hidden="true">
@@ -447,7 +465,7 @@
             </g>
             <circle cx="48" cy="48" r="40.5" fill="none" stroke="#fff3d6" stroke-width="0.8" opacity="0.4"/>
           </svg>
-          <span class="vlt-glyph" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 10V7.5a5 5 0 0 1 10 0V10" stroke="#5a4019" stroke-width="2" stroke-linecap="round"/><rect x="4.8" y="10" width="14.4" height="10" rx="2.2" fill="#4a3414"/><circle cx="12" cy="14.6" r="1.6" fill="#fff3d6"/><rect x="11.2" y="15" width="1.6" height="3.2" rx=".8" fill="#fff3d6"/></svg></span>
+          <span class="vlt-glyph" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 10V7.5a5 5 0 0 1 10 0V10" stroke="#5a4019" stroke-width="2" stroke-linecap="round"/><rect x="4.8" y="10" width="14.4" height="10" rx="2.2" fill="#4a3414"/><circle cx="12" cy="14.6" r="1.6" fill="#fff3d6"/><rect x="11.2" y="15" width="1.6" height="3.2" rx=".8" fill="#fff3d6"/></svg></span><span class="vlt-glyph vlt-glyph-open" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 10V7a5 5 0 0 1 9.6-1.8" stroke="#5a4019" stroke-width="2" stroke-linecap="round"/><rect x="4.8" y="10" width="14.4" height="10" rx="2.2" fill="#4a3414"/><circle cx="12" cy="14.6" r="1.6" fill="#fff3d6"/><rect x="11.2" y="15" width="1.6" height="3.2" rx=".8" fill="#fff3d6"/></svg></span>
         </button>
         <div class="vlt-handle-lbl">Kirish</div>
       </div>
@@ -528,13 +546,16 @@
     $('roleChip').textContent=ROLE_UZ[st.role];
     $('nav-new').style.display=canWrite()?'flex':'none';seyfGo('dash');};
   window.seyfTurn=function(el){
+    var wrap=el?el.parentNode:null;
     if(el)el.classList.add('turning');
+    if(wrap){wrap.classList.remove('live');void wrap.offsetWidth;wrap.classList.add('live');}
     var hub=document.querySelector('.vlt-hub');if(hub)hub.classList.add('spin');
     clearTimeout(window._turnT);
     window._turnT=setTimeout(function(){
       if(el)el.classList.remove('turning');if(hub)hub.classList.remove('spin');
+      if(wrap)wrap.classList.remove('live');
       seyfLogin();
-    },520);
+    },680);
   };
   window.seyfGo=function(v){st.view=v;render();};
   window.seyfBack=function(){seyfGo(st.view==='debtDetail'?'debts':'dash');};
