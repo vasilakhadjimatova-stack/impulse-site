@@ -167,6 +167,10 @@
   .pay-dot{width:8px;height:8px;border-radius:50%;background:var(--gr);flex:0 0 auto}
   .pay-amt{margin-left:auto;font-family:var(--num);font-weight:600;color:var(--gr);white-space:nowrap}
   .payform{display:flex;gap:8px}.payform input{flex:1}
+  .paycur{display:flex;gap:7px;margin-bottom:10px}
+  .paycur button{flex:1;padding:9px 0;border:1px solid var(--ln);border-radius:10px;background:var(--sf2);
+    color:var(--tx3);font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s}
+  .paycur button.on{border-color:var(--goldl);color:var(--goldl);background:rgba(226,198,132,.10);box-shadow:0 0 0 1px var(--goldl) inset}
   .paybtn{padding:0 18px;border:0;border-radius:11px;background:linear-gradient(180deg,#E2C684,#C9A96E);
     color:#241803;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;font-size:14px}
   .rel-box{margin-top:11px;background:var(--sf2);border:1px solid var(--ln);border-radius:11px;padding:11px 13px}
@@ -422,7 +426,7 @@
   var DEBTS=[
     {id:1,lender:'impulse',borrower:'mfaktor_club',cur:'UZS',amount:30000000,note:'Tadbir uchun',date:'bugun 09:48',pays:[]},
     {id:2,lender:'jalinga',borrower:'mfaktor_school',cur:'UZS',amount:50000000,note:'Jihoz xaridi',date:'15.06 11:00',pays:[{amt:20000000,date:'18.06 10:00'}]},
-    {id:3,lender:'impulse',borrower:'mlp',cur:'USD',amount:5000,note:'Boshlang\'ich kapital',date:'12.06 16:30',pays:[{amt:2000,date:'17.06 12:00'}]},
+    {id:3,lender:'impulse',borrower:'mlp',cur:'USD',amount:5000,rate:12700,note:'Boshlang\'ich kapital',date:'12.06 16:30',pays:[{amt:2000,date:'17.06 12:00'}]},
     {id:4,lender:'mfaktor_club',borrower:'jalinga',cur:'UZS',amount:12000000,note:'Reklama',date:'08.06 10:15',pays:[]}
   ];
   var debtSeq=5;
@@ -648,6 +652,7 @@
           '<svg class="darrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h13M13 6l6 6-6 6"/></svg>'+
           '<div class="dparty r"><span class="dpn" style="color:var(--goldl)">'+esc(lN)+'</span>'+dChip(d.lender)+'</div></div>'+
         '<div class="dcard-amt">'+fmt(d.cur,rem)+'</div>'+
+        (d.cur==='USD'&&d.rate?('<div style="text-align:right;font-size:11px;color:var(--tx3);margin-top:1px">≈ '+grp(rem*d.rate)+' so\'m</div>'):'')+
         '<div class="debt-pbar"><i style="width:'+pct+'%"></i></div>'+
         '<div class="dcard-meta"><span>'+esc(d.note||'qarz')+' · '+esc(d.date)+'</span>'+
           '<span class="pd">'+(paid>0?('to\'langan '+pct+'%'):'to\'lanmagan')+'</span></div></div>';
@@ -676,25 +681,38 @@
       '<div class="dd-side"><div class="nm" style="color:var(--rd)">'+esc(bN)+'</div><div class="rl" style="color:var(--rd)">qarzdor</div></div>'+
       '<svg class="dd-arrow" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg>'+
       '<div class="dd-side"><div class="nm" style="color:var(--goldl)">'+esc(lN)+'</div><div class="rl" style="color:var(--lblg)">oluvchi</div></div></div>';
+    var seq=function(usd){return (d.cur==='USD'&&d.rate&&usd>0)?('<div style="font-size:10px;color:var(--tx3);margin-top:3px;letter-spacing:.2px">≈ '+grp(Math.round(usd*d.rate))+' so\'m</div>'):'';};
     h+='<div class="dd-stat3">'+
-      '<div class="b"><div class="l">Asl qarz</div><div class="v">'+fmt(d.cur,d.amount)+'</div></div>'+
-      '<div class="b"><div class="l">To\'langan</div><div class="v" style="color:var(--gr)">'+fmt(d.cur,paid)+'</div></div>'+
-      '<div class="b"><div class="l">Qoldiq</div><div class="v" style="color:'+(done?'var(--gr)':'var(--am)')+'">'+fmt(d.cur,rem)+'</div></div></div>';
+      '<div class="b"><div class="l">Asl qarz</div><div class="v">'+fmt(d.cur,d.amount)+'</div>'+seq(d.amount)+'</div>'+
+      '<div class="b"><div class="l">To\'langan</div><div class="v" style="color:var(--gr)">'+fmt(d.cur,paid)+'</div>'+seq(paid)+'</div>'+
+      '<div class="b"><div class="l">Qoldiq</div><div class="v" style="color:'+(done?'var(--gr)':'var(--am)')+'">'+fmt(d.cur,rem)+'</div>'+seq(rem)+'</div></div>';
+    if(d.cur==='USD'&&d.rate){h+='<div style="text-align:center;font-size:11px;color:var(--tx3);margin-top:8px">qarz kursi: <b style="color:var(--goldl)">1$ = '+grp(d.rate)+' so\'m</b></div>';}
     h+='<div class="debt-pbar" style="height:8px"><i style="width:'+pct+'%"></i></div>'+
        '<div style="text-align:center;font-size:12px;color:var(--tx3);margin:8px 0 4px">'+(done?'✓ To\'liq to\'langan':(pct+'% to\'langan'))+'</div>'+
        '<div style="font-size:12px;color:var(--tx3);text-align:center;margin-bottom:14px">'+esc(d.note||'')+(d.note?' · ':'')+'berilgan: '+esc(d.date)+'</div>';
     if(!done&&canWrite()){
-      h+='<div class="sl">To\'lov qaytarish ('+(d.cur==='USD'?'dollar':'so\'m')+')</div>';
-      var lp=P_(d.lender);var hasW=lp&&lp.wallets&&lp.wallets.filter(function(w){return w.cur===d.cur;}).length;
+      var canSom=(d.cur==='USD'&&d.rate);
+      var payCur=(canSom&&st.payCur)?st.payCur:d.cur;
+      h+='<div class="sl">To\'lov qaytarish</div>';
+      if(canSom){
+        h+='<div class="paycur">'+
+          '<button class="'+(payCur==='USD'?'on':'')+'" onclick="seyfPayCur('+d.id+',\'USD\')">$ Dollar</button>'+
+          '<button class="'+(payCur==='UZS'?'on':'')+'" onclick="seyfPayCur('+d.id+',\'UZS\')">so\'m (kursda)</button>'+
+          '</div>';
+      }
+      var lp=P_(d.lender);var hasW=lp&&lp.wallets&&lp.wallets.filter(function(w){return w.cur===payCur;}).length;
       if(hasW){
         h+='<label class="fl" style="margin:0 0 6px">Qaysi hamyonga tushadi — '+esc(lp.name)+'</label>'+
            '<select id="payWallet" style="margin-bottom:10px">'+
-           lp.wallets.filter(function(w){return w.cur===d.cur;}).map(function(w){return '<option value="'+lp.wallets.indexOf(w)+'">'+esc(w.name)+(w.num?(' · '+esc(w.num)):'')+' — '+fmt(w.cur,w.bal)+'</option>';}).join('')+
+           lp.wallets.filter(function(w){return w.cur===payCur;}).map(function(w){return '<option value="'+lp.wallets.indexOf(w)+'">'+esc(w.name)+(w.num?(' · '+esc(w.num)):'')+' — '+fmt(w.cur,w.bal)+'</option>';}).join('')+
            '</select>';
       }
-      h+='<div class="payform"><input id="payAmt" inputmode="decimal" placeholder="summa ('+(d.cur==='USD'?'$':'so\'m')+')" oninput="seyfGrp(this)">'+
+      h+='<div class="payform"><input id="payAmt" inputmode="decimal" placeholder="summa ('+(payCur==='USD'?'$':'so\'m')+')" oninput="seyfGrp(this);seyfPayPrev('+d.id+')">'+
          '<button class="paybtn" onclick="seyfPay('+d.id+')">Qaytarish</button></div>'+
-         '<div style="font-size:11px;color:var(--tx3);margin-top:6px">Qisman ham bo\'ladi — qoldiqdan kamayadi va tarixga yoziladi.'+(hasW?(' Pul tanlangan '+esc(lp.name)+' hamyoniga tushadi.'):'')+'</div>';
+         '<div id="payPrev" style="font-size:12px;color:var(--goldl);margin-top:7px;min-height:1px"></div>'+
+         '<div style="font-size:11px;color:var(--tx3);margin-top:5px">Qisman ham bo\'ladi — qoldiqdan kamayadi va tarixga yoziladi.'+
+         (payCur==='UZS'?(' Dollar qarz <b style="color:var(--goldl)">'+grp(d.rate)+'</b> kursda so\'mda yopiladi.'):'')+
+         (hasW?(' Pul tanlangan '+esc(lp.name)+' hamyoniga tushadi.'):'')+'</div>';
     }
     h+='<div class="sl">To\'lovlar tarixi</div>';
     h+='<div class="pay-row" style="opacity:.75"><span class="pay-dot" style="background:var(--am)"></span>'+
@@ -702,8 +720,9 @@
        '<span class="pay-amt" style="color:var(--am)">'+fmt(d.cur,d.amount)+'</span></div>';
     if(d.pays&&d.pays.length){
       d.pays.forEach(function(p){
-        h+='<div class="pay-row"><span class="pay-dot"></span><div><div>To\'lov qaytarildi</div>'+
-          '<div class="muted" style="font-size:11px">'+esc(p.date)+'</div></div>'+
+        var somInfo=(p.payCur==='UZS'&&p.som)?('<div class="muted" style="font-size:11px;color:var(--goldl)">'+grp(p.som)+' so\'m to\'landi</div>'):'';
+        h+='<div class="pay-row"><span class="pay-dot"></span><div><div>To\'lov qaytarildi'+(p.payCur==='UZS'?' (so\'mda)':'')+'</div>'+
+          somInfo+'<div class="muted" style="font-size:11px">'+esc(p.date)+'</div></div>'+
           '<span class="pay-amt">−'+fmt(d.cur,p.amt)+'</span></div>';
       });
     } else {
@@ -716,17 +735,42 @@
     }
     $('view').innerHTML=h;
   }
-  window.seyfDebt=function(id){st.curDebt=id;seyfGo('debtDetail');};
+  window.seyfDebt=function(id){st.curDebt=id;st.payCur=null;seyfGo('debtDetail');};
+  window.seyfPayCur=function(id,c){st.payCur=c;renderDebtDetail(id);};
+  window.seyfPayPrev=function(id){
+    var d=null,i;for(i=0;i<DEBTS.length;i++)if(DEBTS[i].id===id)d=DEBTS[i];if(!d)return;
+    var el=$('payPrev');if(!el)return;
+    var raw=parseFloat((($('payAmt')||{}).value||'').replace(/ /g,''))||0;
+    var canSom=(d.cur==='USD'&&d.rate);var payCur=(canSom&&st.payCur)?st.payCur:d.cur;
+    if(raw<=0){el.innerHTML='';return;}
+    if(payCur==='UZS'){el.innerHTML='≈ $'+grp(Math.round(raw/d.rate))+' dollar qarz yopiladi · kurs '+grp(d.rate);}
+    else if(canSom){el.innerHTML='≈ '+grp(Math.round(raw*d.rate))+' so\'m';}
+    else el.innerHTML='';
+  };
   window.seyfPay=function(id){
     var d=null,i;for(i=0;i<DEBTS.length;i++)if(DEBTS[i].id===id)d=DEBTS[i];if(!d)return;
-    var amt=parseFloat((($('payAmt')||{}).value||'').replace(/ /g,''))||0;var rem=dRem(d);
-    if(amt<=0)return;if(amt>rem)amt=rem;
+    var raw=parseFloat((($('payAmt')||{}).value||'').replace(/ /g,''))||0;if(raw<=0)return;
+    var rem=dRem(d);
+    var canSom=(d.cur==='USD'&&d.rate);var payCur=(canSom&&st.payCur)?st.payCur:d.cur;
     var ws=$('payWallet');var wname='';
-    d.pays.push({amt:amt,date:'hozir'});
-    var pb=P_(d.borrower),pl=P_(d.lender);if(pb)pb[d.cur]-=amt;
-    if(pl){pl[d.cur]+=amt;
-      if(ws&&pl.wallets){var wi=parseInt(ws.value,10);if(pl.wallets[wi]){pl.wallets[wi].bal+=amt;wname=pl.wallets[wi].name;}}}
-    OPS.unshift({type:'transfer',proj:d.borrower,counter:d.lender,cur:d.cur,amt:amt,loan:true,note:'Qarz qaytarildi'+(wname?(' → '+wname):''),date:'hozir'});
+    var pb=P_(d.borrower),pl=P_(d.lender);
+    if(payCur===d.cur){
+      var amt=raw;if(amt>rem)amt=rem;
+      d.pays.push({amt:amt,date:'hozir'});
+      if(pb)pb[d.cur]-=amt;
+      if(pl){pl[d.cur]+=amt;
+        if(ws&&pl.wallets){var wi=parseInt(ws.value,10);if(pl.wallets[wi]){pl.wallets[wi].bal+=amt;wname=pl.wallets[wi].name;}}}
+      OPS.unshift({type:'transfer',proj:d.borrower,counter:d.lender,cur:d.cur,amt:amt,loan:true,note:'Qarz qaytarildi'+(wname?(' → '+wname):''),date:'hozir'});
+    } else {
+      var som=raw;var maxSom=Math.round(rem*d.rate);if(som>maxSom)som=maxSom;
+      var redUsd=som/d.rate;if(redUsd>rem)redUsd=rem;
+      d.pays.push({amt:redUsd,date:'hozir',payCur:'UZS',som:som});
+      if(pb)pb['UZS']-=som;
+      if(pl){pl['UZS']+=som;
+        if(ws&&pl.wallets){var wj=parseInt(ws.value,10);if(pl.wallets[wj]){pl.wallets[wj].bal+=som;wname=pl.wallets[wj].name;}}}
+      OPS.unshift({type:'transfer',proj:d.borrower,counter:d.lender,cur:'UZS',amt:som,loan:true,note:'Dollar qarz so\'mda qaytarildi (≈ $'+grp(Math.round(redUsd))+')'+(wname?(' → '+wname):''),date:'hozir'});
+    }
+    st.payCur=null;
     renderDebtDetail(id);
   };
 
@@ -799,15 +843,17 @@
       if(o.amt<=0)return;P_(o.proj)[o.cur]+=(t==='income'?o.amt:-o.amt);}
     else if(t==='transfer'){var from=$('f_from').value,to=$('f_to').value,cur=$('f_cur').value,amt=num('f_amt');
       if(amt<=0||from===to)return;
+      var rate=(cur==='USD')?(parseFloat((($('f_rate')||{}).value||'').replace(/ /g,''))||0):0;
+      if(cur==='USD'&&!rate)rate=12700;
       o.proj=from;o.counter=to;o.cur=cur;o.amt=amt;o.loan=true;
       var pf=P_(from),pt=P_(to);if(pf)pf[cur]-=amt;if(pt)pt[cur]+=amt;
       var rev=DEBTS.filter(function(d){return d.cur===cur&&dRem(d)>0&&d.lender===to&&d.borrower===from;}).sort(function(x,y){return x.id-y.id;});
       if(rev.length){var left=amt;
         for(var k=0;k<rev.length&&left>0;k++){var r=rev[k];var pay=Math.min(left,dRem(r));if(pay>0){r.pays.push({amt:pay,date:'hozir'});left-=pay;}}
-        if(left>0)DEBTS.push({id:debtSeq++,lender:from,borrower:to,cur:cur,amount:left,note:'ortiqcha to\'lov',date:'hozir',pays:[]});
+        if(left>0)DEBTS.push({id:debtSeq++,lender:from,borrower:to,cur:cur,rate:rate,amount:left,note:'ortiqcha to\'lov',date:'hozir',pays:[]});
         o.note=(note?note+' · ':'')+'qarz qaytarildi';o.repay=true;
       } else {
-        DEBTS.push({id:debtSeq++,lender:from,borrower:to,cur:cur,amount:amt,note:note,date:'hozir',pays:[]});
+        DEBTS.push({id:debtSeq++,lender:from,borrower:to,cur:cur,rate:rate,amount:amt,note:note,date:'hozir',pays:[]});
       }}
     else if(t==='exchange'){o.proj=$('f_proj').value;o.sellCur=$('f_sc').value;o.buyCur=$('f_bc').value;o.sellAmt=num('f_sa');o.buyAmt=num('f_ba');
       if(o.sellAmt<=0||o.buyAmt<=0||o.sellCur===o.buyCur)return;var pp=P_(o.proj);pp[o.sellCur]-=o.sellAmt;pp[o.buyCur]+=o.buyAmt;}
