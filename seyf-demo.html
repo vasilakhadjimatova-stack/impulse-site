@@ -63,18 +63,20 @@
     border:1px solid var(--ln);background:var(--inset)}
   .lgd .d{width:14px;height:14px;border-radius:50%}
   .pgrid{display:grid;gap:11px;margin-bottom:4px}
-  .pcard{border:1px solid var(--ln);border-radius:16px;padding:15px 14px;cursor:pointer;position:relative;overflow:hidden;
-    background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0))}
+  .pcard{display:flex;align-items:center;gap:13px;border:1px solid var(--ln);border-radius:15px;padding:13px 15px;cursor:pointer;
+    position:relative;overflow:hidden;min-width:0;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0))}
   .pcard::before{content:"";position:absolute;left:0;top:0;height:100%;width:3px;background:var(--pcol,var(--gold));opacity:.85}
   .pcard:active{border-color:var(--ln2)}
-  .pcard .lgb{width:56px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--ln2);
+  .pcard .lgb{width:52px;height:52px;border-radius:13px;background:#fff;border:1px solid var(--ln2);flex:0 0 auto;
     display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .pcard .lgb img{width:100%;height:100%;object-fit:contain;padding:6px}
-  .pcard .lgbd{width:56px;height:56px;border-radius:14px;border:1px solid var(--ln);background:var(--inset);display:flex;align-items:center;justify-content:center}
-  .pcard .nm{font-weight:500;font-size:14.5px;margin-top:12px}
-  .pcard .b1{font-family:var(--num);font-weight:600;font-size:18px;color:var(--goldl);margin-top:10px;
-    letter-spacing:-.1px;white-space:nowrap;font-variant-numeric:tabular-nums}
-  .pcard .b2{font-family:var(--num);font-size:14px;color:var(--tx3);margin-top:4px}
+  .pcard .lgb img{width:100%;height:100%;object-fit:contain;padding:5px}
+  .pcard .lgbd{width:52px;height:52px;border-radius:13px;border:1px solid var(--ln);background:var(--inset);flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .pcard .pc-mid{flex:1;min-width:0}
+  .pcard .nm{font-weight:500;font-size:15px}
+  .pcard .pc-bal{text-align:right;flex:0 0 auto}
+  .pcard .b1{font-family:var(--num);font-weight:600;font-size:18px;color:var(--goldl);
+    letter-spacing:-.2px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .pcard .b2{font-family:var(--num);font-size:13px;color:var(--tx3);margin-top:3px;white-space:nowrap}
   .pc .nm{font-weight:500}
   .pc .bal{margin-left:auto;text-align:right;font-family:var(--num);font-size:14px;color:var(--tx)}
   .op{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--ln)}
@@ -436,13 +438,13 @@
     var h='<div class="row2" style="margin-bottom:6px"><div class="mc"><div class="l">Jami — so\'m</div><div class="v">'+grp(tu)+'</div></div>'+
       '<div class="mc"><div class="l">Jami — dollar</div><div class="v">$'+grp(td)+'</div></div></div>';
     h+='<div class="sl">Loyihalar</div>';
-    var cols=vis.length===1?'1fr':'1fr 1fr';
-    h+='<div class="pgrid" style="grid-template-columns:'+cols+'">';
+    h+='<div class="pgrid" style="grid-template-columns:minmax(0,1fr)">';
     vis.forEach(function(p){
       var chip=p.logo?('<span class="lgb"><img src="'+p.logo+'" alt=""></span>')
         :('<span class="lgbd"><span class="d" style="width:18px;height:18px;border-radius:50%;background:'+p.color+';box-shadow:0 0 11px '+p.color+'"></span></span>');
       h+='<div class="pcard" style="--pcol:'+p.color+'" onclick="seyfProj(\''+p.code+'\')">'+chip+
-        '<div class="nm">'+esc(p.name)+'</div><div class="b1">'+grp(p.UZS)+'</div><div class="b2">$'+grp(p.USD)+'</div></div>';});
+        '<div class="pc-mid"><div class="nm">'+esc(p.name)+'</div></div>'+
+        '<div class="pc-bal"><div class="b1">'+grp(p.UZS)+'</div><div class="b2">$'+grp(p.USD)+'</div></div></div>';});
     h+='</div>';
     if(canWrite())h+='<button class="pbtn" onclick="seyfGo(\'new\')" style="margin-top:8px">+ Yangi amal</button>';
     h+='<div class="sl">So\'nggi amallar</div>';
