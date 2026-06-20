@@ -166,12 +166,12 @@
   .rel-t{font-size:10.5px;color:var(--lblg);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
   .rel-row{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:3px 0}
   .rel-amt{font-family:var(--num);font-weight:600;color:var(--am);white-space:nowrap}
-  .ai-wrap{text-align:center;padding:6px 0}
-  .ai-orb{position:relative;width:128px;height:128px;margin:16px auto 8px;cursor:pointer}
-  .ai-orb .core{position:absolute;inset:38px;border-radius:50%;z-index:2;display:flex;align-items:center;justify-content:center;
+  .ai-wrap{text-align:center;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0}
+  .ai-orb{position:relative;width:160px;height:160px;margin:6px auto 12px;cursor:pointer}
+  .ai-orb .core{position:absolute;inset:46px;border-radius:50%;z-index:2;display:flex;align-items:center;justify-content:center;
     background:radial-gradient(circle at 38% 30%,#F4E2B4,var(--gold) 55%,var(--goldd));
-    box-shadow:0 8px 22px rgba(201,169,110,.45),inset 0 2px 4px rgba(255,255,255,.55),inset 0 -4px 8px rgba(70,46,16,.6)}
-  .ai-orb .core svg{width:30px;height:30px;stroke:#241803;stroke-width:1.8;fill:none}
+    box-shadow:0 10px 28px rgba(201,169,110,.5),inset 0 2px 5px rgba(255,255,255,.6),inset 0 -5px 10px rgba(70,46,16,.6)}
+  .ai-orb .core svg{width:38px;height:38px;stroke:#241803;stroke-width:1.8;fill:none}
   .ai-ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(201,169,110,.45);opacity:0}
   .ai-orb.live .ring1{animation:aiPulse 1.9s ease-out infinite}
   .ai-orb.live .ring2{animation:aiPulse 1.9s ease-out .65s infinite}
