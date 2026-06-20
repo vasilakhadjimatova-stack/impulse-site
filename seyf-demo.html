@@ -684,10 +684,17 @@
        '<div style="text-align:center;font-size:12px;color:var(--tx3);margin:8px 0 4px">'+(done?'✓ To\'liq to\'langan':(pct+'% to\'langan'))+'</div>'+
        '<div style="font-size:12px;color:var(--tx3);text-align:center;margin-bottom:14px">'+esc(d.note||'')+(d.note?' · ':'')+'berilgan: '+esc(d.date)+'</div>';
     if(!done&&canWrite()){
-      h+='<div class="sl">To\'lov qaytarish</div>'+
-         '<div class="payform"><input id="payAmt" inputmode="decimal" placeholder="summa ('+(d.cur==='USD'?'$':'so\'m')+')" oninput="seyfGrp(this)">'+
+      h+='<div class="sl">To\'lov qaytarish ('+(d.cur==='USD'?'dollar':'so\'m')+')</div>';
+      var lp=P_(d.lender);var hasW=lp&&lp.wallets&&lp.wallets.filter(function(w){return w.cur===d.cur;}).length;
+      if(hasW){
+        h+='<label class="fl" style="margin:0 0 6px">Qaysi hamyonga tushadi — '+esc(lp.name)+'</label>'+
+           '<select id="payWallet" style="margin-bottom:10px">'+
+           lp.wallets.filter(function(w){return w.cur===d.cur;}).map(function(w){return '<option value="'+lp.wallets.indexOf(w)+'">'+esc(w.name)+(w.num?(' · '+esc(w.num)):'')+' — '+fmt(w.cur,w.bal)+'</option>';}).join('')+
+           '</select>';
+      }
+      h+='<div class="payform"><input id="payAmt" inputmode="decimal" placeholder="summa ('+(d.cur==='USD'?'$':'so\'m')+')" oninput="seyfGrp(this)">'+
          '<button class="paybtn" onclick="seyfPay('+d.id+')">Qaytarish</button></div>'+
-         '<div style="font-size:11px;color:var(--tx3);margin-top:6px">Qisman ham bo\'ladi — qoldiqdan kamayadi va tarixga yoziladi.</div>';
+         '<div style="font-size:11px;color:var(--tx3);margin-top:6px">Qisman ham bo\'ladi — qoldiqdan kamayadi va tarixga yoziladi.'+(hasW?(' Pul tanlangan '+esc(lp.name)+' hamyoniga tushadi.'):'')+'</div>';
     }
     h+='<div class="sl">To\'lovlar tarixi</div>';
     h+='<div class="pay-row" style="opacity:.75"><span class="pay-dot" style="background:var(--am)"></span>'+
@@ -702,6 +709,11 @@
     } else {
       h+='<div class="muted" style="padding:10px 0;font-size:12.5px">Hali to\'lov yo\'q — to\'liq qarz turibdi.</div>';
     }
+    if(d.lender==='impulse'||d.borrower==='impulse'){
+      h+='<div style="margin-top:16px;padding:11px 13px;border:1px dashed var(--ln2);border-radius:11px;font-size:11.5px;color:var(--tx3);display:flex;gap:8px;align-items:flex-start">'+
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--goldl)" stroke-width="1.8" style="flex:0 0 auto;margin-top:1px"><path d="M9 12a3 3 0 0 0 3 3h3a3 3 0 0 0 0-6h-1M15 12a3 3 0 0 0-3-3H9a3 3 0 0 0 0 6h1"/></svg>'+
+        '<span>Impulse qarzlari haqiqiy dasturda <b style="color:var(--goldl)">Moliya ERP «Loyihalar qarzi»</b> bo\'limi bilan avtomatik bog\'lanadi (real vaqtli).</span></div>';
+    }
     $('view').innerHTML=h;
   }
   window.seyfDebt=function(id){st.curDebt=id;seyfGo('debtDetail');};
@@ -709,9 +721,12 @@
     var d=null,i;for(i=0;i<DEBTS.length;i++)if(DEBTS[i].id===id)d=DEBTS[i];if(!d)return;
     var amt=parseFloat((($('payAmt')||{}).value||'').replace(/ /g,''))||0;var rem=dRem(d);
     if(amt<=0)return;if(amt>rem)amt=rem;
+    var ws=$('payWallet');var wname='';
     d.pays.push({amt:amt,date:'hozir'});
-    var pb=P_(d.borrower),pl=P_(d.lender);if(pb)pb[d.cur]-=amt;if(pl)pl[d.cur]+=amt;
-    OPS.unshift({type:'transfer',proj:d.borrower,counter:d.lender,cur:d.cur,amt:amt,loan:true,note:'Qarz qaytarildi',date:'hozir'});
+    var pb=P_(d.borrower),pl=P_(d.lender);if(pb)pb[d.cur]-=amt;
+    if(pl){pl[d.cur]+=amt;
+      if(ws&&pl.wallets){var wi=parseInt(ws.value,10);if(pl.wallets[wi]){pl.wallets[wi].bal+=amt;wname=pl.wallets[wi].name;}}}
+    OPS.unshift({type:'transfer',proj:d.borrower,counter:d.lender,cur:d.cur,amt:amt,loan:true,note:'Qarz qaytarildi'+(wname?(' → '+wname):''),date:'hozir'});
     renderDebtDetail(id);
   };
 
