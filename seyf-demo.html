@@ -174,6 +174,23 @@
   .rel-t{font-size:10.5px;color:var(--lblg);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
   .rel-row{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:3px 0}
   .rel-amt{font-family:var(--num);font-weight:600;color:var(--am);white-space:nowrap}
+  .dcard{border:1px solid var(--ln);border-radius:15px;padding:14px;margin-bottom:11px;cursor:pointer;
+    background:linear-gradient(180deg,rgba(255,255,255,.022),transparent);box-shadow:0 8px 22px -12px rgba(0,0,0,.6)}
+  .dcard:active{border-color:var(--ln2)}
+  .dparties{display:flex;align-items:center;gap:9px}
+  .dparty{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+  .dparty.r{justify-content:flex-end;text-align:right}
+  .dchip{width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--ln2);flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .dchip img{width:100%;height:100%;object-fit:contain;padding:3px}
+  .dchipd{width:34px;height:34px;border-radius:9px;border:1px solid var(--ln);background:var(--inset);flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .dpn{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .darrow{flex:0 0 auto;color:var(--am)}
+  .dcard-amt{font-family:var(--num);font-weight:600;font-size:22px;color:var(--am);margin-top:13px;text-align:right;letter-spacing:-.3px;white-space:nowrap}
+  .dcard-meta{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--tx3);margin-top:9px}
+  .dcard-meta .pd{color:var(--gr);font-weight:500}
+  .dcard.done{opacity:.62}
+  .dcard.done .dcard-amt{color:var(--tx2);font-size:16px}
   .ai-wrap{text-align:center;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0}
   .ai-orb{position:relative;width:160px;height:160px;margin:6px auto 12px;cursor:pointer}
   .ai-orb .core{position:absolute;inset:46px;border-radius:50%;z-index:2;display:flex;align-items:center;justify-content:center;
@@ -583,65 +600,42 @@
       var mine=function(d){return d.lender===st.sc||d.borrower===st.sc;};
       ds=ds.filter(mine);done=done.filter(mine);
     }
-    var netU={},sumU=0,sumD=0;
-    ds.forEach(function(d){var r=dRem(d);
-      if(d.cur==='USD'){sumD+=r;}else{sumU+=r;netU[d.lender]=(netU[d.lender]||0)+r;netU[d.borrower]=(netU[d.borrower]||0)-r;}
-    });
+    var dChip=function(code){var p=P_(code);
+      return (p&&p.logo)?('<span class="dchip"><img src="'+p.logo+'" alt=""></span>')
+        :('<span class="dchipd"><span style="width:12px;height:12px;border-radius:50%;background:'+(p?p.color:'#888')+'"></span></span>');};
+    var sumU=0,sumD=0;ds.forEach(function(d){var r=dRem(d);if(d.cur==='USD')sumD+=r;else sumU+=r;});
     var h='<div class="row2" style="margin-bottom:12px">'+
       '<div class="mc"><div class="l">Jami qoldiq — so\'m</div><div class="v">'+grp(sumU)+'</div></div>'+
       '<div class="mc"><div class="l">Jami qoldiq — dollar</div><div class="v">$'+grp(sumD)+'</div></div></div>';
-    h+='<div class="dq-legend"><span class="g">●</span> <b style="color:var(--gr)">oladi (haqdor)</b> — boshqalar shu loyihaga qarzdor<br>'+
-       '<span class="r">●</span> <b style="color:var(--rd)">beradi (qarzdor)</b> — shu loyiha boshqalarga qarzdor</div>';
-    var rows=Object.keys(netU).map(function(c){return {c:c,n:netU[c]};}).filter(function(x){return x.n!==0;}).sort(function(a,b){return b.n-a.n;});
-    var uD=ds.filter(function(d){return d.cur==='UZS';});
-    var hasC=!!window.Chart;
-    if(rows.length){
-      h+='<div class="sl">Loyihalar holati — sof qarz (so\'m)</div>';
-      if(hasC){
-        h+='<div class="chbox"><div class="chttl">Kim haqdor (yashil) · kim qarzdor (qizil)</div>'+
-           '<div class="chwrap" style="height:'+(rows.length*40+22)+'px"><canvas id="cNet"></canvas></div></div>';
-      }else{
-        var max=1;rows.forEach(function(x){max=Math.max(max,Math.abs(x.n));});
-        rows.forEach(function(x){
-          var pos=x.n>0;var col=pos?'var(--gr)':'var(--rd)';var w=Math.max(6,Math.round(100*Math.abs(x.n)/max));
-          h+='<div class="dq-stat" style="border-left-color:'+col+'"><div class="dq-stat-top">'+
-            '<span class="dq-stat-name">'+esc((P_(x.c)||{}).name||x.c)+'</span>'+
-            '<span class="dq-stat-net" style="color:'+col+'">'+(pos?'+':'−')+grp(Math.abs(x.n))+'</span></div>'+
-            '<div class="dq-bar"><i style="width:'+w+'%;background:'+col+'"></i></div>'+
-            '<div class="dq-tag" style="color:'+col+'">'+(pos?'jami OLADI — haqdor':'jami BERADI — qarzdor')+'</div></div>';
-        });
-      }
-    }
-    if(hasC&&uD.length){
-      h+='<div class="sl">Qoldiq qarz tarkibi — so\'m</div>'+
-         '<div class="chbox"><div class="chwrap" style="height:248px"><canvas id="cPie"></canvas>'+
-         '<div class="donut-c"><div class="v">'+grp(sumU)+'</div><div class="l">qoldiq, so\'m</div></div></div></div>';
-    }
+    h+='<div class="dq-legend"><b style="color:var(--rd)">qizil</b> = qarzdor (berishi kerak) · <b style="color:var(--goldl)">tilla</b> = oluvchi (pulni oladi) · <b>bosing</b> — tafsilot va to\'lov</div>';
     h+='<div class="sl">Faol qarzlar</div>';
-    h+='<div class="dq-legend" style="margin-top:-4px"><b style="color:var(--rd)">qarzdor</b> → <b style="color:var(--goldl)">oluvchi</b> · qoldiq ko\'rsatilgan · <b>bosing</b> — tafsilot va to\'lov</div>';
-    if(!ds.length)h+='<div class="muted" style="padding:14px 0;text-align:center">Faol qarz yo\'q ✓</div>';
+    if(!ds.length)h+='<div class="muted" style="padding:18px 0;text-align:center">Faol qarz yo\'q ✓</div>';
     ds.forEach(function(d){
-      var b=(P_(d.borrower)||{}).name||d.borrower,l=(P_(d.lender)||{}).name||d.lender;
+      var bN=(P_(d.borrower)||{}).name||d.borrower,lN=(P_(d.lender)||{}).name||d.lender;
       var rem=dRem(d),paid=dPaid(d),pct=Math.round(paid/d.amount*100);
-      h+='<div class="debt-card" onclick="seyfDebt('+d.id+')">'+
-        '<div class="debt-top"><div class="dq-pair"><span class="dq-b">'+esc(b)+'</span>'+
-          '<svg class="dq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg>'+
-          '<span class="dq-l">'+esc(l)+'</span></div><span class="debt-rem">'+fmt(d.cur,rem)+'</span></div>'+
+      h+='<div class="dcard" onclick="seyfDebt('+d.id+')">'+
+        '<div class="dparties">'+
+          '<div class="dparty">'+dChip(d.borrower)+'<span class="dpn" style="color:var(--rd)">'+esc(bN)+'</span></div>'+
+          '<svg class="darrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h13M13 6l6 6-6 6"/></svg>'+
+          '<div class="dparty r"><span class="dpn" style="color:var(--goldl)">'+esc(lN)+'</span>'+dChip(d.lender)+'</div></div>'+
+        '<div class="dcard-amt">'+fmt(d.cur,rem)+'</div>'+
         '<div class="debt-pbar"><i style="width:'+pct+'%"></i></div>'+
-        '<div class="debt-meta"><span>'+esc(d.note||'qarz')+' · '+esc(d.date)+'</span>'+
-          '<span class="debt-paid">'+(paid>0?('to\'langan '+pct+'%'):'to\'lanmagan')+'</span></div></div>';
+        '<div class="dcard-meta"><span>'+esc(d.note||'qarz')+' · '+esc(d.date)+'</span>'+
+          '<span class="pd">'+(paid>0?('to\'langan '+pct+'%'):'to\'lanmagan')+'</span></div></div>';
     });
     if(done.length){
       h+='<div class="sl">Yopilgan qarzlar</div>';
       done.forEach(function(d){
-        var b=(P_(d.borrower)||{}).name||d.borrower,l=(P_(d.lender)||{}).name||d.lender;
-        h+='<div class="debt-card done" onclick="seyfDebt('+d.id+')"><div class="debt-top">'+
-          '<span style="color:var(--tx2);font-size:13.5px">'+esc(b)+' → '+esc(l)+'</span>'+
-          '<span class="debt-done-b">✓ to\'langan · '+fmt(d.cur,d.amount)+'</span></div></div>';
+        var bN=(P_(d.borrower)||{}).name||d.borrower,lN=(P_(d.lender)||{}).name||d.lender;
+        h+='<div class="dcard done" onclick="seyfDebt('+d.id+')">'+
+          '<div class="dparties">'+
+            '<div class="dparty">'+dChip(d.borrower)+'<span class="dpn">'+esc(bN)+'</span></div>'+
+            '<svg class="darrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h13M13 6l6 6-6 6"/></svg>'+
+            '<div class="dparty r"><span class="dpn">'+esc(lN)+'</span>'+dChip(d.lender)+'</div></div>'+
+          '<div class="dcard-meta"><span class="pd">✓ to\'langan</span><span style="font-family:var(--num);color:var(--tx2)">'+fmt(d.cur,d.amount)+'</span></div></div>';
       });
     }
     $('view').innerHTML=h;
-    drawDebtCharts(rows,uD);
   }
 
   function renderDebtDetail(id){
