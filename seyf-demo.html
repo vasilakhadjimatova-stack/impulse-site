@@ -532,8 +532,7 @@
       p.wallets.forEach(function(w){
         h+='<div class="wrow"><span class="wic">'+(WIC[w.type]||WIC.cash)+'</span>'+
           '<div style="min-width:0"><div class="wnm">'+esc(w.name)+(w.num?(' <span class="wnum">'+esc(w.num)+'</span>'):'')+'</div>'+
-          '<div class="wty">'+(WTY[w.type]||w.type)+' · '+(w.cur==='USD'?'dollar':'so\'m')+'</div></div>'+
-          '<span class="wbal">'+fmt(w.cur,w.bal)+'</span></div>';
+          '<div class="wty">'+(WTY[w.type]||w.type)+' · '+(w.cur==='USD'?'dollar':'so\'m')+'</div></div></div>';
       });
     }
     ['UZS','USD'].forEach(function(cur){
@@ -706,7 +705,7 @@
       if(hasW){
         h+='<label class="fl" style="margin:0 0 6px">Qaysi hamyonga tushadi — '+esc(lp.name)+'</label>'+
            '<select id="payWallet" style="margin-bottom:10px">'+
-           lp.wallets.filter(function(w){return w.cur===payCur;}).map(function(w){return '<option value="'+lp.wallets.indexOf(w)+'">'+esc(w.name)+(w.num?(' · '+esc(w.num)):'')+' — '+fmt(w.cur,w.bal)+'</option>';}).join('')+
+           lp.wallets.filter(function(w){return w.cur===payCur;}).map(function(w){return '<option value="'+lp.wallets.indexOf(w)+'">'+esc(w.name)+(w.num?(' · '+esc(w.num)):'')+'</option>';}).join('')+
            '</select>';
       }
       h+='<div class="payform"><input id="payAmt" inputmode="decimal" placeholder="summa ('+(payCur==='USD'?'$':'so\'m')+')" oninput="seyfGrp(this);seyfPayPrev('+d.id+')">'+
