@@ -256,7 +256,8 @@
     body{align-items:center;padding:22px;box-sizing:border-box}
     #seyf{max-width:1280px;height:calc(100vh - 44px);height:calc(100dvh - 44px);border:1px solid rgba(201,169,110,.16);border-radius:22px;box-shadow:0 40px 90px -28px rgba(0,0,0,.75)}
     #loginScr{justify-content:center}
-    #appScr{display:grid!important;grid-template-columns:266px 1fr;grid-template-rows:auto 1fr;grid-template-areas:"nav hd" "nav view";overflow:hidden}
+    #appScr{grid-template-columns:266px 1fr;grid-template-rows:auto 1fr;grid-template-areas:"nav hd" "nav view";overflow:hidden}
+    #appScr.shown{display:grid!important}
     .hd{grid-area:hd;padding:19px 34px}
     .hd .t{font-size:25px}
     .view{grid-area:view;padding:30px 40px;max-width:1120px;margin-inline:auto;width:100%;box-sizing:border-box}
@@ -498,7 +499,7 @@
     var c=($('codeIn').value||'').trim();var r=ROLES[c];
     if(!r){$('loginErr').textContent='Kod noto\'g\'ri';return;}
     st.role=r.role;st.sc=r.sc||null;st.view='dash';
-    $('loginScr').style.display='none';$('appScr').style.display='flex';
+    $('loginScr').style.display='none';$('appScr').style.display='flex';$('appScr').classList.add('shown');
     $('roleChip').textContent=ROLE_UZ[st.role];
     $('nav-new').style.display=canWrite()?'flex':'none';seyfGo('dash');};
   window.seyfTurn=function(el){
