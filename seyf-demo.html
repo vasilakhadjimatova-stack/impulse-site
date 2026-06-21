@@ -251,16 +251,44 @@
   .view::-webkit-scrollbar{width:7px}
   .view::-webkit-scrollbar-thumb{background:rgba(201,169,110,.32);border-radius:8px}
   .view::-webkit-scrollbar-track{background:transparent}
+  /* ════════ KUNDUZGI (yorug') MAVZU ════════ */
+  :root[data-theme="day"]{
+    --bg:#ECE5D6;--sf:#FFFFFF;--sf2:#F7F2E8;--inset:#EFE8DA;
+    --tx:#1F2533;--tx2:#5C6374;--tx3:#8C92A1;--lblg:#9A7B3F;
+    --gold:#B0843A;--goldl:#8A6620;--goldd:#6E5418;
+    --ln:rgba(150,115,50,.20);--ln2:rgba(150,115,50,.40);
+    --info:#B0843A;--infobg:rgba(176,132,58,.12);
+    --gr:#1E9B53;--grbg:rgba(30,155,83,.12);--rd:#CE463F;--rdbg:rgba(206,70,63,.12);
+    --bl:#3A7FD9;--blbg:rgba(58,127,217,.12);--am:#B0843A;--ambg:rgba(176,132,58,.14)}
+  [data-theme="day"] body{background:radial-gradient(120% 50% at 50% -8%,rgba(176,132,58,.10),transparent 60%),var(--bg)}
+  [data-theme="day"] #seyf{background:linear-gradient(180deg,#FCFAF4,#F3EDE1);box-shadow:0 0 50px rgba(120,100,60,.16)}
+  [data-theme="day"] .hd{background:linear-gradient(180deg,rgba(176,132,58,.07),transparent)}
+  [data-theme="day"] .nav{background:rgba(120,95,40,.04)}
+  [data-theme="day"] .mc{background:#FFFFFF;box-shadow:0 2px 10px rgba(90,70,30,.06)}
+  [data-theme="day"] .pcard{background:#FFFFFF;box-shadow:0 2px 10px rgba(90,70,30,.05)}
+  [data-theme="day"] .kpi,[data-theme="day"] .dcol-side{background:#FFFFFF}
+  [data-theme="day"] .dv-track,[data-theme="day"] .dq-bar,[data-theme="day"] .debt-pbar{background:rgba(0,0,0,.07)}
+  [data-theme="day"] .view::-webkit-scrollbar-thumb{background:rgba(176,132,58,.4)}
+  /* ── KPI + boyitilgan dashboard ── */
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .kpi{background:var(--sf2);border:1px solid var(--ln);border-radius:14px;padding:13px 15px;min-width:0}
+  .kpi-l{font-size:10.5px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px}
+  .kpi-v{font-family:var(--num);font-weight:700;font-size:21px;margin-top:6px;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--goldl)}
+  .kpi-s{font-size:10.5px;color:var(--tx3);margin-top:2px}
+  .kpi-am .kpi-v{color:var(--am)}.kpi-bl .kpi-v{color:var(--bl)}.kpi-gr .kpi-v{color:var(--gr)}
+  .dash-grid{display:block}
+  .dcol-side{margin-top:6px}
+  .gbtn.thm svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
   /* ════════ KOMPYUTER (desktop) KO'RINISHI ════════ */
   @media (min-width:860px){
     body{align-items:center;padding:22px;box-sizing:border-box}
-    #seyf{max-width:1280px;height:calc(100vh - 44px);height:calc(100dvh - 44px);border:1px solid rgba(201,169,110,.16);border-radius:22px;box-shadow:0 40px 90px -28px rgba(0,0,0,.75)}
+    #seyf{max-width:1480px;height:calc(100vh - 44px);height:calc(100dvh - 44px);border:1px solid rgba(201,169,110,.16);border-radius:22px;box-shadow:0 40px 90px -28px rgba(0,0,0,.75)}
     #loginScr{justify-content:center}
-    #appScr{grid-template-columns:266px 1fr;grid-template-rows:auto 1fr;grid-template-areas:"nav hd" "nav view";overflow:hidden}
+    #appScr{grid-template-columns:272px 1fr;grid-template-rows:auto 1fr;grid-template-areas:"nav hd" "nav view";overflow:hidden}
     #appScr.shown{display:grid!important}
-    .hd{grid-area:hd;padding:19px 34px}
+    .hd{grid-area:hd;padding:19px 38px}
     .hd .t{font-size:25px}
-    .view{grid-area:view;padding:30px 40px;max-width:1120px;margin-inline:auto;width:100%;box-sizing:border-box}
+    .view{grid-area:view;padding:32px 44px;max-width:1340px;margin-inline:auto;width:100%;box-sizing:border-box}
     .view[data-view="new"],.view[data-view="debtDetail"],.view[data-view="ai"]{max-width:700px}
     .view[data-view="project"]{max-width:860px}
     /* ── chap SIDEBAR ── */
@@ -285,8 +313,19 @@
     #nav-new:hover{filter:brightness(1.06);background:linear-gradient(180deg,#E2C684,#C9A96E);color:#241803}
     #nav-new.on::before{display:none}
     .pgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    /* ── boyitilgan desktop dashboard ── */
+    .kpis{grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}
+    .kpi{padding:16px 19px;border-radius:16px}
+    .kpi-v{font-size:25px}.kpi-l{font-size:11px}
+    .dash-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;align-items:start}
+    .dcol-side{margin-top:0;background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:4px 18px 16px}
+    .dash-newbtn{display:none}
+    /* kunduzgi rejimда sidebar yorug' */
+    [data-theme="day"] .nav{background:linear-gradient(180deg,#F7F2E8,#EFE8DA);border-right:1px solid rgba(150,115,50,.18)}
+    [data-theme="day"] .nav button:hover{background:rgba(120,95,40,.06)}
+    [data-theme="day"] .dcol-side{box-shadow:0 2px 12px rgba(90,70,30,.05)}
   }
-  @media (min-width:1240px){.pgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+  @media (min-width:1280px){.dash-grid{grid-template-columns:1.7fr 1fr;gap:30px}}
 </style>
 </head>
 <body>
@@ -425,7 +464,8 @@
     <div class="hd">
       <button id="backBtn" class="gbtn" style="display:none" onclick="seyfBack()">&lsaquo;</button>
       <span class="t" id="hdTitle">Seyf</span>
-      <span class="chip" id="roleChip" style="margin-left:auto"></span>
+      <button id="themeBtn" class="gbtn thm" onclick="seyfTheme()" style="margin-left:auto" aria-label="Mavzu" title="Mavzu — tungi/kunduzgi"></button>
+      <span class="chip" id="roleChip" style="margin-left:10px"></span>
     </div>
     <div class="view" id="view"></div>
     <div class="nav">
@@ -495,6 +535,10 @@
   function visible(){return st.role==='owner'?P.filter(function(p){return p.code===st.sc;}):P.slice();}
   function canWrite(){return st.role==='director'||st.role==='cashier';}
   function opVisible(o){if(st.role!=='owner')return true;return o.proj===st.sc||o.counter===st.sc;}
+  var SUN_SVG='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2v2.4M12 19.6V22M4.5 4.5l1.7 1.7M17.8 17.8l1.7 1.7M2 12h2.4M19.6 12H22M4.5 19.5l1.7-1.7M17.8 6.2l1.7-1.7"/></svg>';
+  var MOON_SVG='<svg viewBox="0 0 24 24"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>';
+  function applyTheme(t){var d=document.documentElement;if(t==='day')d.setAttribute('data-theme','day');else d.removeAttribute('data-theme');var b=$('themeBtn');if(b)b.innerHTML=(t==='day')?MOON_SVG:SUN_SVG;}
+  window.seyfTheme=function(){var cur=document.documentElement.getAttribute('data-theme')==='day'?'day':'night';var nx=(cur==='day')?'night':'day';applyTheme(nx);try{localStorage.setItem('seyfTheme',nx);}catch(e){}};
   window.seyfLogin=function(){
     var c=($('codeIn').value||'').trim();var r=ROLES[c];
     if(!r){$('loginErr').textContent='Kod noto\'g\'ri';return;}
@@ -523,12 +567,26 @@
     setNav();
     if(v==='dash')renderDash();else if(v==='ops')renderOps();else if(v==='new')renderNew();
     else if(v==='project')renderProject();else if(v==='debts')renderDebts();else if(v==='debtDetail')renderDebtDetail(st.curDebt);else if(v==='ai')renderAI();}
+  function kpi(label,value,sub,cls){
+    return '<div class="kpi kpi-'+cls+'"><div class="kpi-l">'+esc(label)+'</div><div class="kpi-v">'+value+'</div><div class="kpi-s">'+esc(sub)+'</div></div>';
+  }
+  function debtMiniRow(d){
+    var L=(P_(d.lender)||{}).name||d.lender,B=(P_(d.borrower)||{}).name||d.borrower;
+    return '<div class="op" style="cursor:pointer" onclick="seyfDebt('+d.id+')"><span class="bdg bt">Qarz</span>'+
+      '<div style="min-width:0"><div>'+esc(B)+' → '+esc(L)+'</div><div class="muted" style="font-size:11px">'+esc(d.note||'')+'</div></div>'+
+      '<span class="amt am">'+fmt(d.cur,dRem(d))+'</span></div>';
+  }
   function renderDash(){
     var vis=visible();var tu=0,td=0;vis.forEach(function(p){tu+=p.UZS;td+=p.USD;});
-    var h='<div class="row2" style="margin-bottom:6px"><div class="mc"><div class="l">Jami — so\'m</div><div class="v">'+grp(tu)+'</div></div>'+
-      '<div class="mc"><div class="l">Jami — dollar</div><div class="v">$'+grp(td)+'</div></div></div>';
-    h+='<div class="sl">Loyihalar</div>';
-    h+='<div class="pgrid" style="grid-template-columns:minmax(0,1fr)">';
+    var dvis=DEBTS.filter(function(d){return dRem(d)>0&&(st.role!=='owner'||d.lender===st.sc||d.borrower===st.sc);});
+    var h='<div class="kpis">'+
+      kpi('Jami — so\'m',grp(tu),'umumiy kassa','gold')+
+      kpi('Jami — dollar','$'+grp(td),'valyuta','gold')+
+      kpi('Faol qarzlar',grp(dvis.length),'oldi-berdi','am')+
+      kpi('Loyihalar',grp(vis.length),'kassa soni','bl')+
+    '</div>';
+    h+='<div class="dash-grid">';
+    h+='<div class="dcol dcol-main"><div class="sl">Loyihalar kassasi</div><div class="pgrid">';
     vis.forEach(function(p){
       var chip=p.logo?('<span class="lgb"><img src="'+p.logo+'" alt=""></span>')
         :('<span class="lgbd"><span class="d" style="width:18px;height:18px;border-radius:50%;background:'+p.color+';box-shadow:0 0 11px '+p.color+'"></span></span>');
@@ -536,11 +594,18 @@
         '<div class="pc-mid"><div class="nm">'+esc(p.name)+'</div></div>'+
         '<div class="pc-bal"><div class="b1">'+grp(p.UZS)+'</div><div class="b2">$'+grp(p.USD)+'</div></div></div>';});
     h+='</div>';
-    if(canWrite())h+='<button class="pbtn" onclick="seyfNew()" style="margin-top:8px">+ Yangi amal</button>';
-    h+='<div class="sl">So\'nggi amallar</div>';
-    var rec=OPS.filter(opVisible).slice(0,8);
+    if(canWrite())h+='<button class="pbtn dash-newbtn" onclick="seyfNew()" style="margin-top:10px">+ Yangi amal</button>';
+    h+='</div>';
+    h+='<div class="dcol dcol-side"><div class="sl">So\'nggi amallar</div>';
+    var rec=OPS.filter(opVisible).slice(0,7);
     if(!rec.length)h+='<div class="muted" style="padding:14px 0">Amal yo\'q</div>';
-    rec.forEach(function(o){h+=opRow(o);});$('view').innerHTML=h;}
+    rec.forEach(function(o){h+=opRow(o);});
+    h+='<div class="sl" style="margin-top:18px">Qarzlar — qisqacha</div>';
+    if(!dvis.length)h+='<div class="muted" style="padding:10px 0;font-size:13px">Faol qarz yo\'q</div>';
+    else{dvis.slice(0,5).forEach(function(d){h+=debtMiniRow(d);});
+      if(dvis.length>5)h+='<div style="text-align:center;margin-top:10px"><span style="font-size:12px;color:var(--goldl);cursor:pointer" onclick="seyfGo(\'debts\')">Barcha qarzlar ('+dvis.length+') →</span></div>';}
+    h+='</div></div>';
+    $('view').innerHTML=h;}
   function opRow(o){
     var sign=o.type==='income'?'+':(o.type==='expense'?'−':'');
     var amtTxt=o.type==='exchange'?('−'+fmt(o.sellCur,o.sellAmt)+' → +'+fmt(o.buyCur,o.buyAmt)):(sign+fmt(o.cur,o.amt));
@@ -955,6 +1020,7 @@
   window.seyfDelOp=function(id){var o=opById(id);if(!o||!o.live)return;if(opLocked(o)){alert(LOCKMSG);return;}if(!confirm('Bu amal o\'chirilsinmi? Balanslar tiklanadi.'))return;revertOp(o);var ix=OPS.indexOf(o);if(ix>=0)OPS.splice(ix,1);st.editId=null;render();};
   window.seyfNew=function(){st.editId=null;st.newProj=null;seyfGo('new');};
   $('codeIn').addEventListener('keydown',function(e){if(e.key==='Enter')seyfLogin();});
+  (function(){var t='night';try{t=localStorage.getItem('seyfTheme')||'night';}catch(e){}applyTheme(t);})();
 })();
 </script>
 </body>
