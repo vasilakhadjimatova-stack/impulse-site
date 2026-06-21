@@ -261,8 +261,7 @@
 .vx-tl{top:11px;left:11px}.vx-tr{top:11px;right:11px;transform:scaleX(-1)}.vx-bl{bottom:11px;left:11px;transform:scaleY(-1)}.vx-br{bottom:11px;right:11px;transform:scale(-1,-1)}
 .vx-crest{position:relative;z-index:8;width:56px;height:42px;margin:4px auto 0}
 .vx-crest svg{width:100%;height:100%;display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
-.vx-name{font-family:'Playfair Display','Cormorant Garamond',serif;font-weight:700;font-size:44px;letter-spacing:.04em;line-height:1;position:relative;z-index:8;background:linear-gradient(180deg,var(--g1),#f2d791 32%,var(--g2) 64%,var(--g3));-webkit-background-clip:text;background-clip:text;color:#e7c75a}
-.vx-name::after{content:"Seyf";position:absolute;inset:0;background:linear-gradient(110deg,transparent 32%,rgba(255,255,255,.85) 48%,transparent 60%);-webkit-background-clip:text;background-clip:text;color:transparent;mix-blend-mode:screen;animation:vxgl 6.5s ease-in-out infinite}
+.vx-name{font-family:'Playfair Display','Cormorant Garamond',serif;font-weight:700;font-size:44px;letter-spacing:.04em;line-height:1;position:relative;z-index:8;background:linear-gradient(100deg,transparent 36%,rgba(255,255,255,.92) 47%,transparent 57%),linear-gradient(180deg,var(--g1),#f2d791 32%,var(--g2) 64%,var(--g3));background-size:280% 100%,100% 100%;background-position:150% 0,0 0;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:vxgl 6.5s ease-in-out infinite}
 .vx-rule{position:relative;z-index:8;display:flex;align-items:center;justify-content:center;gap:9px;margin:9px auto 1px;width:62%}
 .vx-rule span{height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(243,215,125,.55),transparent)}
 .vx-rule b{width:6px;height:6px;transform:rotate(45deg);background:linear-gradient(135deg,var(--g1),var(--g3));box-shadow:0 0 5px rgba(243,215,125,.5)}
@@ -310,7 +309,7 @@
 #loginErr:not(:empty){opacity:1;animation:vxsh .4s}
 .vx-demo{position:relative;z-index:8;margin-top:4px;font-family:'JetBrains Mono',monospace;font-size:10.5px;line-height:1.8;color:#8a7c5c;max-width:320px}
 .vx-demo b{color:var(--g2)}.vx-demo .d{color:#4f4838;padding:0 4px}.vx-demo .j{color:#6e6549}
-@keyframes vxgl{0%,72%{transform:translateX(-130%)}86%,100%{transform:translateX(130%)}}
+@keyframes vxgl{0%,72%{background-position:150% 0,0 0}86%,100%{background-position:-50% 0,0 0}}
 @keyframes vxfl{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @keyframes vxbr{0%,100%{opacity:.34;transform:scale(.97)}50%{opacity:.62;transform:scale(1.03)}}
 @keyframes vxgb{0%,100%{transform:translateX(0) rotate(8deg)}50%{transform:translateX(360%) rotate(8deg)}}
@@ -342,7 +341,7 @@
 @keyframes vxoR{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(2.3)}}
 @keyframes vxoE{45%{transform:rotate(-3deg) translateY(2px)}100%{transform:translateY(4px) scale(.99)}}
 @media (max-width:392px){.vx-name{font-size:38px}.vx-enter{font-size:21px;letter-spacing:.24em}}
-@media (prefers-reduced-motion:reduce){.vx-plate,.vx-bezel,.vx-dial,.vx-hub,.vx-name::after,.vx-led .a,.vx-hub b,.vx-enter::before,.vx-halo,.vx-gleam,.vx-ripple{animation:none!important}#loginScr.is-opening .vx-plate{filter:brightness(1.3)}#loginScr.is-opening .vx-bezel,#loginScr.is-opening .vx-bzr,#loginScr.is-opening .vx-dial,#loginScr.is-opening .vx-led .a,#loginScr.is-opening .vx-halo,#loginScr.is-opening .vx-hub,#loginScr.is-opening .vx-ripple,.vx-enter.is-opening{animation-duration:.3s!important}}
+@media (prefers-reduced-motion:reduce){.vx-plate,.vx-bezel,.vx-dial,.vx-hub,.vx-name,.vx-led .a,.vx-hub b,.vx-enter::before,.vx-halo,.vx-gleam,.vx-ripple{animation:none!important}#loginScr.is-opening .vx-plate{filter:brightness(1.3)}#loginScr.is-opening .vx-bezel,#loginScr.is-opening .vx-bzr,#loginScr.is-opening .vx-dial,#loginScr.is-opening .vx-led .a,#loginScr.is-opening .vx-halo,#loginScr.is-opening .vx-hub,#loginScr.is-opening .vx-ripple,.vx-enter.is-opening{animation-duration:.3s!important}}
 </style>
 <div class="vx-wrap">
 <div class="vx-frame"></div><div class="vx-frame2"></div>
