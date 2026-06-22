@@ -530,7 +530,7 @@
   var ROLE_UZ={director:'Direktor',cashier:'Kassir',owner:'Loyiha egasi'};
   var BCLS={income:'bi',expense:'be',exchange:'bx',transfer:'bt'};
   var LAB={income:'Kirim',expense:'Chiqim',exchange:'Ayirboshlash',transfer:"Qarz"};
-  var st={role:null,sc:null,view:'dash',curProj:null,newType:'income',editId:null,filterProj:null};
+  var st={role:null,sc:null,view:'dash',curProj:null,newType:'income',editId:null,filterProj:null,period:'Oylik'};
   var $=function(id){return document.getElementById(id);};
   function grp(n){n=Math.round(n);var s=Math.abs(n).toLocaleString('en-US').replace(/,/g,' ');return (n<0?'−':'')+s;}
   function fmt(cur,n){return cur==='USD'?('$'+grp(n)):(grp(n)+" so'm");}
@@ -588,6 +588,25 @@
     return h+'</div>';
   }
   window.seyfFilter=function(code){st.filterProj=code||null;render();};
+  function opDaysAgo(o){
+    var d=(o.date||'').trim();
+    if(/^(bugun|hozir|kecha)/i.test(d))return /^kecha/i.test(d)?1:0;
+    var m=d.match(/^(\d{1,2})\.(\d{1,2})/);
+    if(!m)return 0;
+    var now=new Date(),day=parseInt(m[1],10),mon=parseInt(m[2],10)-1;
+    var dt=new Date(now.getFullYear(),mon,day);
+    if(dt>now)dt=new Date(now.getFullYear()-1,mon,day);
+    return Math.floor((now-dt)/86400000);
+  }
+  function opInPeriod(o){
+    var days=opDaysAgo(o);
+    if(st.period==='Kunlik')return days<=0;
+    if(st.period==='Haftalik')return days<=7;
+    if(st.period==='Oylik')return days<=31;
+    if(st.period==='Choraklik')return days<=92;
+    return true;
+  }
+  window.seyfPeriod=function(p){st.period=p;render();};
   function renderDash(){
     var vis=visible();var tu=0,td=0;vis.forEach(function(p){tu+=p.UZS;td+=p.USD;});
     var dvis=DEBTS.filter(function(d){return dRem(d)>0&&(st.role!=='owner'||d.lender===st.sc||d.borrower===st.sc);});
@@ -636,10 +655,11 @@
       '<span class="amt '+cl+'">'+amtTxt+'</span>'+act+'</div>';}
   function renderOps(){
     var h=projFilterBar();
-    h+='<div style="display:flex;gap:7px;margin-bottom:14px">';
-    ['Kunlik','Haftalik','Oylik','Choraklik'].forEach(function(x,i){h+='<span style="font-size:11.5px;padding:6px 11px;border-radius:9px;border:1px solid var(--ln2);'+
-      (i===2?'background:var(--infobg);color:var(--goldl)':'color:var(--tx2)')+'">'+x+'</span>';});h+='</div>';
-    var list=OPS.filter(opVisible).filter(opMatchesFilter);if(!list.length)h+='<div class="muted" style="padding:20px 0;text-align:center">Amal yo\'q</div>';
+    h+='<div class="pfilter">';
+    ['Kunlik','Haftalik','Oylik','Choraklik'].forEach(function(x){h+='<button class="pf'+(st.period===x?' on':'')+'" onclick="seyfPeriod(\''+x+'\')">'+x+'</button>';});
+    h+='</div>';
+    var list=OPS.filter(opVisible).filter(opMatchesFilter).filter(opInPeriod);
+    if(!list.length)h+='<div class="muted" style="padding:20px 0;text-align:center">Bu davrда amal yo\'q</div>';
     list.forEach(function(o){h+=opRow(o);});$('view').innerHTML=h;}
   function renderProject(){
     var p=P_(st.curProj);if(!p){seyfGo('dash');return;}
