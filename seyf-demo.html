@@ -276,8 +276,12 @@
   .kpi-v{font-family:var(--num);font-weight:700;font-size:21px;margin-top:6px;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--goldl)}
   .kpi-s{font-size:10.5px;color:var(--tx3);margin-top:2px}
   .kpi-am .kpi-v{color:var(--am)}.kpi-bl .kpi-v{color:var(--bl)}.kpi-gr .kpi-v{color:var(--gr)}
-  .dash-grid{display:block}
-  .dcol-side{margin-top:6px}
+  .dash-bottom{display:block}
+  .pfilter{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 14px}
+  .pf{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--ln);border-radius:999px;background:var(--sf2);color:var(--tx2);font-size:12px;font-family:inherit;cursor:pointer;white-space:nowrap;transition:.15s}
+  .pf:hover{border-color:var(--ln2);color:var(--tx)}
+  .pf.on{border-color:var(--goldl);color:var(--goldl);background:var(--infobg)}
+  .pf-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
   .gbtn.thm svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8}
   /* ════════ KOMPYUTER (desktop) KO'RINISHI ════════ */
   @media (min-width:860px){
@@ -312,20 +316,20 @@
     #nav-new svg{stroke:#241803}
     #nav-new:hover{filter:brightness(1.06);background:linear-gradient(180deg,#E2C684,#C9A96E);color:#241803}
     #nav-new.on::before{display:none}
-    .pgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .pgrid{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))!important}
     /* ── boyitilgan desktop dashboard ── */
     .kpis{grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}
     .kpi{padding:16px 19px;border-radius:16px}
     .kpi-v{font-size:25px}.kpi-l{font-size:11px}
-    .dash-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;align-items:start}
-    .dcol-side{margin-top:0;background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:4px 18px 16px}
+    .pfilter{margin:6px 0 16px}
+    .dash-bottom{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-top:8px}
+    .dbcol{background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:4px 18px 16px}
     .dash-newbtn{display:none}
     /* kunduzgi rejimда sidebar yorug' */
     [data-theme="day"] .nav{background:linear-gradient(180deg,#F7F2E8,#EFE8DA);border-right:1px solid rgba(150,115,50,.18)}
     [data-theme="day"] .nav button:hover{background:rgba(120,95,40,.06)}
-    [data-theme="day"] .dcol-side{box-shadow:0 2px 12px rgba(90,70,30,.05)}
+    [data-theme="day"] .dbcol{box-shadow:0 2px 12px rgba(90,70,30,.05)}
   }
-  @media (min-width:1280px){.dash-grid{grid-template-columns:1.7fr 1fr;gap:30px}}
 </style>
 </head>
 <body>
@@ -526,7 +530,7 @@
   var ROLE_UZ={director:'Direktor',cashier:'Kassir',owner:'Loyiha egasi'};
   var BCLS={income:'bi',expense:'be',exchange:'bx',transfer:'bt'};
   var LAB={income:'Kirim',expense:'Chiqim',exchange:'Ayirboshlash',transfer:"Qarz"};
-  var st={role:null,sc:null,view:'dash',curProj:null,newType:'income',editId:null};
+  var st={role:null,sc:null,view:'dash',curProj:null,newType:'income',editId:null,filterProj:null};
   var $=function(id){return document.getElementById(id);};
   function grp(n){n=Math.round(n);var s=Math.abs(n).toLocaleString('en-US').replace(/,/g,' ');return (n<0?'−':'')+s;}
   function fmt(cur,n){return cur==='USD'?('$'+grp(n)):(grp(n)+" so'm");}
@@ -576,6 +580,14 @@
       '<div style="min-width:0"><div>'+esc(B)+' → '+esc(L)+'</div><div class="muted" style="font-size:11px">'+esc(d.note||'')+'</div></div>'+
       '<span class="amt am">'+fmt(d.cur,dRem(d))+'</span></div>';
   }
+  function opMatchesFilter(o){return !st.filterProj||o.proj===st.filterProj||o.counter===st.filterProj;}
+  function projFilterBar(){
+    var vis=visible();if(vis.length<2)return '';
+    var h='<div class="pfilter"><button class="pf'+(!st.filterProj?' on':'')+'" onclick="seyfFilter(\'\')">Hammasi</button>';
+    vis.forEach(function(p){h+='<button class="pf'+(st.filterProj===p.code?' on':'')+'" onclick="seyfFilter(\''+p.code+'\')"><span class="pf-dot" style="background:'+p.color+'"></span>'+esc(p.name)+'</button>';});
+    return h+'</div>';
+  }
+  window.seyfFilter=function(code){st.filterProj=code||null;render();};
   function renderDash(){
     var vis=visible();var tu=0,td=0;vis.forEach(function(p){tu+=p.UZS;td+=p.USD;});
     var dvis=DEBTS.filter(function(d){return dRem(d)>0&&(st.role!=='owner'||d.lender===st.sc||d.borrower===st.sc);});
@@ -585,8 +597,7 @@
       kpi('Faol qarzlar',grp(dvis.length),'oldi-berdi','am')+
       kpi('Loyihalar',grp(vis.length),'kassa soni','bl')+
     '</div>';
-    h+='<div class="dash-grid">';
-    h+='<div class="dcol dcol-main"><div class="sl">Loyihalar kassasi</div><div class="pgrid">';
+    h+='<div class="sl">Loyihalar kassasi</div><div class="pgrid">';
     vis.forEach(function(p){
       var chip=p.logo?('<span class="lgb"><img src="'+p.logo+'" alt=""></span>')
         :('<span class="lgbd"><span class="d" style="width:18px;height:18px;border-radius:50%;background:'+p.color+';box-shadow:0 0 11px '+p.color+'"></span></span>');
@@ -595,16 +606,20 @@
         '<div class="pc-bal"><div class="b1">'+grp(p.UZS)+'</div><div class="b2">$'+grp(p.USD)+'</div></div></div>';});
     h+='</div>';
     if(canWrite())h+='<button class="pbtn dash-newbtn" onclick="seyfNew()" style="margin-top:10px">+ Yangi amal</button>';
-    h+='</div>';
-    h+='<div class="dcol dcol-side"><div class="sl">So\'nggi amallar</div>';
-    var rec=OPS.filter(opVisible).slice(0,7);
+    h+=projFilterBar();
+    h+='<div class="dash-bottom">';
+    h+='<div class="dbcol"><div class="sl">So\'nggi amallar</div>';
+    var rec=OPS.filter(opVisible).filter(opMatchesFilter).slice(0,8);
     if(!rec.length)h+='<div class="muted" style="padding:14px 0">Amal yo\'q</div>';
     rec.forEach(function(o){h+=opRow(o);});
-    h+='<div class="sl" style="margin-top:18px">Qarzlar — qisqacha</div>';
-    if(!dvis.length)h+='<div class="muted" style="padding:10px 0;font-size:13px">Faol qarz yo\'q</div>';
-    else{dvis.slice(0,5).forEach(function(d){h+=debtMiniRow(d);});
-      if(dvis.length>5)h+='<div style="text-align:center;margin-top:10px"><span style="font-size:12px;color:var(--goldl);cursor:pointer" onclick="seyfGo(\'debts\')">Barcha qarzlar ('+dvis.length+') →</span></div>';}
-    h+='</div></div>';
+    h+='</div>';
+    h+='<div class="dbcol"><div class="sl">Qarzlar — qisqacha</div>';
+    var dfil=dvis.filter(function(d){return !st.filterProj||d.lender===st.filterProj||d.borrower===st.filterProj;});
+    if(!dfil.length)h+='<div class="muted" style="padding:10px 0;font-size:13px">Faol qarz yo\'q</div>';
+    else{dfil.slice(0,6).forEach(function(d){h+=debtMiniRow(d);});
+      if(dfil.length>6)h+='<div style="text-align:center;margin-top:10px"><span style="font-size:12px;color:var(--goldl);cursor:pointer" onclick="seyfGo(\'debts\')">Barcha qarzlar ('+dfil.length+') →</span></div>';}
+    h+='</div>';
+    h+='</div>';
     $('view').innerHTML=h;}
   function opRow(o){
     var sign=o.type==='income'?'+':(o.type==='expense'?'−':'');
@@ -620,10 +635,11 @@
       '<div style="font-size:11.5px" class="muted">'+esc(sub)+' · '+esc(o.date)+(o.edited?' · <span style="color:var(--goldl)">tahrirlangan</span>':'')+'</div></div>'+
       '<span class="amt '+cl+'">'+amtTxt+'</span>'+act+'</div>';}
   function renderOps(){
-    var h='<div style="display:flex;gap:7px;margin-bottom:14px">';
+    var h=projFilterBar();
+    h+='<div style="display:flex;gap:7px;margin-bottom:14px">';
     ['Kunlik','Haftalik','Oylik','Choraklik'].forEach(function(x,i){h+='<span style="font-size:11.5px;padding:6px 11px;border-radius:9px;border:1px solid var(--ln2);'+
       (i===2?'background:var(--infobg);color:var(--goldl)':'color:var(--tx2)')+'">'+x+'</span>';});h+='</div>';
-    var list=OPS.filter(opVisible);if(!list.length)h+='<div class="muted" style="padding:20px 0;text-align:center">Amal yo\'q</div>';
+    var list=OPS.filter(opVisible).filter(opMatchesFilter);if(!list.length)h+='<div class="muted" style="padding:20px 0;text-align:center">Amal yo\'q</div>';
     list.forEach(function(o){h+=opRow(o);});$('view').innerHTML=h;}
   function renderProject(){
     var p=P_(st.curProj);if(!p){seyfGo('dash');return;}
