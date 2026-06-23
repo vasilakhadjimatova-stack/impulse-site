@@ -1010,7 +1010,7 @@
     var last=t.lastElementChild;if(last)last.scrollIntoView({block:'nearest'});
   }
   window.seyfAiClear=function(){st.aiHist=[];st.aiPending=false;renderAI();};
-  function aiSetStatus(m){var s=$('aiStatus');if(s)s.textContent=m;}
+  function aiSetStatus(m){var s=$('aiStatusTxt');if(s)s.textContent=m;}
   function renderAI(){
     var has=st.aiHist.length;
     var h='<div class="ai-wrap">'+
@@ -1018,7 +1018,7 @@
         '<span class="ai-ring ring1"></span><span class="ai-ring ring2"></span><span class="ai-ring ring3"></span>'+
         '<span class="core"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>'+
       '</div>'+
-      '<div class="ai-status" id="aiStatus">Bosing va gapiring — yoki yozing'+(has?' · <span class="ai-clear-link" onclick="seyfAiClear()">yangi suhbat</span>':'')+'</div>'+
+      '<div class="ai-status"><span id="aiStatusTxt">Bosing va gapiring — yoki yozing</span>'+(has?' · <span class="ai-clear-link" onclick="seyfAiClear()">yangi suhbat</span>':'')+'</div>'+
       '<div class="ai-inrow"><input id="aiInput" placeholder="Savol yozing…" onkeydown="if(event.key===\'Enter\')seyfAskInput()"><button class="paybtn" onclick="seyfAskInput()">So\'rash</button></div>'+
       (has?'':'<div class="ai-chips">'+AIQ.map(function(q){return '<span class="ai-chip" onclick="seyfAsk(this.textContent)">'+esc(q)+'</span>';}).join('')+'</div>')+
       '<div id="aiThread" class="ai-thread"></div></div>';
