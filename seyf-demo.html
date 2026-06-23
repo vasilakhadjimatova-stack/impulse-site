@@ -241,6 +241,12 @@
   .ai-inrow input{flex:1;padding:11px 14px;border-radius:12px;border:1px solid var(--ln2);background:var(--inset);color:var(--tx);font-family:inherit;font-size:14px;outline:none}
   .ai-inrow input:focus{border-color:var(--goldl)}
   .ai-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:480px;margin:4px auto 0}
+  .ai-thread{margin-top:16px;text-align:left;display:flex;flex-direction:column;gap:9px;max-width:540px;margin-left:auto;margin-right:auto}
+  .ai-msg{padding:10px 13px;border-radius:13px;font-size:13.5px;line-height:1.5;max-width:88%;white-space:pre-wrap;word-break:break-word}
+  .ai-msg.user{align-self:flex-end;background:var(--infobg);color:var(--goldl);border:1px solid var(--ln2);border-bottom-right-radius:5px}
+  .ai-msg.ai{align-self:flex-start;background:var(--sf2);color:var(--tx);border:1px solid var(--ln);border-bottom-left-radius:5px}
+  .ai-msg.pending{color:var(--tx3);font-style:italic}
+  .ai-clear-link{color:var(--goldl);cursor:pointer;text-decoration:underline}
   .ai-ans{margin-top:16px;text-align:left;background:var(--sf2);border:1px solid var(--ln);border-radius:12px;
     padding:13px 15px;font-size:13.5px;line-height:1.55;color:var(--tx)}
   .ai-q{font-size:12px;color:var(--lblg);margin-bottom:6px}
@@ -546,7 +552,7 @@
   var ROLE_UZ={director:'Direktor',cashier:'Kassir',owner:'Loyiha egasi'};
   var BCLS={income:'bi',expense:'be',exchange:'bx',transfer:'bt'};
   var LAB={income:'Kirim',expense:'Chiqim',exchange:'Ayirboshlash',transfer:"Qarz"};
-  var st={role:null,sc:null,view:'dash',curProj:null,newType:'income',editId:null,filterProj:null,period:'Oylik'};
+  var st={role:null,sc:null,view:'dash',curProj:null,newType:'income',editId:null,filterProj:null,period:'Oylik',aiHist:[]};
   var $=function(id){return document.getElementById(id);};
   function grp(n){n=Math.round(n);var s=Math.abs(n).toLocaleString('en-US').replace(/,/g,' ');return (n<0?'−':'')+s;}
   function fmt(cur,n){return cur==='USD'?('$'+grp(n)):(grp(n)+" so'm");}
@@ -995,37 +1001,48 @@
     var ops=OPS.filter(opVisible).slice(0,20).map(function(o){return {tur:LAB[o.type],loyiha:(P_(o.proj)||{}).name,kimga:(o.counter?(P_(o.counter)||{}).name:undefined),valyuta:o.cur,summa:(o.type==='exchange'?(o.sellAmt+' '+o.sellCur+' -> '+o.buyAmt+' '+o.buyCur):o.amt),izoh:o.note||o.cat,sana:o.date};});
     return {jami:{som:tu,dollar:td},loyihalar:vis.map(function(p){return {nom:p.name,som:p.UZS,dollar:p.USD};}),qarzlar:debts,songgi_amallar:ops};
   }
-  function aiShow(q,a){var s=$('aiStatus');if(s)s.textContent='Bosing va gapiring — yoki yozing';var box=$('aiAns');if(box)box.innerHTML='<div class="ai-ans"><div class="ai-q">"'+esc(q)+'"</div>'+esc(a).replace(/\n/g,'<br>')+'</div>';}
-  function aiPend(q){var box=$('aiAns');if(box)box.innerHTML='<div class="ai-ans"><div class="ai-q">"'+esc(q)+'"</div><div class="muted">o\'ylayapman…</div></div>';}
-  function aiErr(q,m){var s=$('aiStatus');if(s)s.textContent='Bosing va gapiring — yoki yozing';var box=$('aiAns');if(box)box.innerHTML='<div class="ai-ans">'+(q?'<div class="ai-q">"'+esc(q)+'"</div>':'')+'<div style="color:var(--rd)">'+esc(m)+'</div></div>';}
+  function renderAiThread(){
+    var t=$('aiThread');if(!t)return;
+    var h='';
+    st.aiHist.forEach(function(m){h+='<div class="ai-msg '+(m.role==='user'?'user':'ai')+'">'+esc(m.content).replace(/\n/g,'<br>')+'</div>';});
+    if(st.aiPending)h+='<div class="ai-msg ai pending">o\'ylayapman…</div>';
+    t.innerHTML=h;
+    var last=t.lastElementChild;if(last)last.scrollIntoView({block:'nearest'});
+  }
+  window.seyfAiClear=function(){st.aiHist=[];st.aiPending=false;renderAI();};
+  function aiSetStatus(m){var s=$('aiStatus');if(s)s.textContent=m;}
   function renderAI(){
+    var has=st.aiHist.length;
     var h='<div class="ai-wrap">'+
       '<div class="ai-orb" id="aiOrb" onclick="seyfMic()" role="button" aria-label="Tinglash">'+
         '<span class="ai-ring ring1"></span><span class="ai-ring ring2"></span><span class="ai-ring ring3"></span>'+
         '<span class="core"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>'+
       '</div>'+
-      '<div class="ai-status" id="aiStatus">Bosing va gapiring — yoki yozing</div>'+
+      '<div class="ai-status" id="aiStatus">Bosing va gapiring — yoki yozing'+(has?' · <span class="ai-clear-link" onclick="seyfAiClear()">yangi suhbat</span>':'')+'</div>'+
       '<div class="ai-inrow"><input id="aiInput" placeholder="Savol yozing…" onkeydown="if(event.key===\'Enter\')seyfAskInput()"><button class="paybtn" onclick="seyfAskInput()">So\'rash</button></div>'+
-      '<div class="ai-chips">'+AIQ.map(function(q){return '<span class="ai-chip" onclick="seyfAsk(this.textContent)">'+esc(q)+'</span>';}).join('')+'</div>'+
-      '<div id="aiAns"></div></div>';
-    $('view').innerHTML=h;
+      (has?'':'<div class="ai-chips">'+AIQ.map(function(q){return '<span class="ai-chip" onclick="seyfAsk(this.textContent)">'+esc(q)+'</span>';}).join('')+'</div>')+
+      '<div id="aiThread" class="ai-thread"></div></div>';
+    $('view').innerHTML=h;renderAiThread();
   }
   window.seyfAskInput=function(){var inp=$('aiInput');if(inp&&inp.value.trim()){var q=inp.value.trim();inp.value='';seyfAsk(q);}};
   window.seyfAsk=function(q){
     if(typeof q==='number')q=AIQ[q]||'';q=(q||'').trim();if(!q)return;
+    var hist=st.aiHist.slice();
+    st.aiHist.push({role:'user',content:q});st.aiPending=true;
     var orb=$('aiOrb');if(orb)orb.classList.remove('live');
-    var s=$('aiStatus');if(s)s.textContent='O\'ylayapman…';aiPend(q);
-    fetch(AI_BASE+'/ai/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,ctx:seyfAiCtx()})})
+    renderAI();aiSetStatus('O\'ylayapman…');
+    fetch(AI_BASE+'/ai/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,ctx:seyfAiCtx(),history:hist})})
       .then(function(r){return r.json();}).then(function(d){
-        if(!d.ok){aiErr(q,d.error||'Xato');return;}
-        aiShow(q,d.answer||'(javob yo\'q)');
-      }).catch(function(){aiErr(q,'Server bilan bog\'lanib bo\'lmadi');});
+        st.aiPending=false;
+        st.aiHist.push({role:'assistant',content:d.ok?(d.answer||'(javob yo\'q)'):('⚠ '+(d.error||'Xato'))});
+        renderAI();
+      }).catch(function(){st.aiPending=false;st.aiHist.push({role:'assistant',content:'⚠ Server bilan bog\'lanib bo\'lmadi'});renderAI();});
   };
   function stopAiRec(){clearTimeout(window._aiMax);try{if(st.aiRec&&st.aiRec.state!=='inactive')st.aiRec.stop();}catch(e){}}
   window.seyfMic=function(){
-    var orb=$('aiOrb'),s=$('aiStatus');if(!orb)return;
+    var orb=$('aiOrb');if(!orb)return;
     if(st.aiRec){stopAiRec();return;}
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){if(s)s.textContent='Bu brauzerда ovoz qo\'llanmaydi — yozib so\'rang';return;}
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){aiSetStatus('Bu brauzerда ovoz qo\'llanmaydi — yozib so\'rang');return;}
     navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
       var mime=MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':(MediaRecorder.isTypeSupported('audio/mp4')?'audio/mp4':'');
       var mr=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);
@@ -1033,18 +1050,23 @@
       mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data);};
       mr.onstop=function(){
         try{stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
-        st.aiRec=null;orb.classList.remove('live');if(s)s.textContent='O\'ylayapman…';
+        st.aiRec=null;orb.classList.remove('live');
         var mt=mr.mimeType||mime||'audio/webm';var blob=new Blob(chunks,{type:mt});
-        if(!blob.size){aiErr('','Ovoz yozilmadi');return;}
-        var fd=new FormData();fd.append('audio',blob,'ovoz.'+(mt.indexOf('mp4')>=0?'mp4':'webm'));fd.append('ctx',JSON.stringify(seyfAiCtx()));
+        if(!blob.size){aiSetStatus('Ovoz yozilmadi — qaytadan');return;}
+        st.aiPending=true;renderAiThread();aiSetStatus('Eshityapman…');
+        var hist=st.aiHist.slice();
+        var fd=new FormData();fd.append('audio',blob,'ovoz.'+(mt.indexOf('mp4')>=0?'mp4':'webm'));fd.append('ctx',JSON.stringify(seyfAiCtx()));fd.append('history',JSON.stringify(hist));
         fetch(AI_BASE+'/ai/voice',{method:'POST',body:fd}).then(function(r){return r.json();}).then(function(d){
-          if(!d.ok){aiErr('',d.error||'Xato');return;}
-          aiShow(d.text||'(ovoz)',d.answer||'(javob yo\'q)');
-        }).catch(function(){aiErr('','Server bilan bog\'lanib bo\'lmadi');});
+          st.aiPending=false;
+          if(!d.ok){aiSetStatus(d.error||'Xato');renderAiThread();return;}
+          st.aiHist.push({role:'user',content:d.text||'(ovoz)'});
+          st.aiHist.push({role:'assistant',content:d.answer||'(javob yo\'q)'});
+          renderAI();
+        }).catch(function(){st.aiPending=false;aiSetStatus('Server bilan bog\'lanib bo\'lmadi');renderAiThread();});
       };
-      st.aiRec=mr;mr.start();orb.classList.add('live');if(s)s.textContent='Tinglayapman… (yana bosing — to\'xtatish)';
+      st.aiRec=mr;mr.start();orb.classList.add('live');aiSetStatus('Tinglayapman… (yana bosing — to\'xtatish)');
       clearTimeout(window._aiMax);window._aiMax=setTimeout(stopAiRec,12000);
-    }).catch(function(){if(s)s.textContent='Mikrofonga ruxsat berilmadi';});
+    }).catch(function(){aiSetStatus('Mikrofonga ruxsat berilmadi');});
   };
 
   window.seyfGrp=function(inp){var v=(inp.value||'').replace(/[^\d.]/g,'');var pr=v.split('.');pr[0]=pr[0].replace(/\B(?=(\d{3})+(?!\d))/g,' ');inp.value=pr.join('.');};
