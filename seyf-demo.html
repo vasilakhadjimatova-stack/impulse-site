@@ -89,6 +89,8 @@
   .pc .nm{font-weight:500}
   .pc .bal{margin-left:auto;text-align:right;font-family:var(--num);font-size:14px;color:var(--tx)}
   .op{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--ln)}
+  .op .opnote{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .demo-badge{font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--lblg);border:1px solid var(--ln2);border-radius:6px;padding:2px 6px;margin-left:9px;opacity:.85;white-space:nowrap}
   .bdg{font-size:10.5px;padding:3px 9px;border-radius:7px;white-space:nowrap;font-weight:600;letter-spacing:.2px;border:1px solid transparent}
   .amt{margin-left:auto;font-family:var(--num);font-weight:600;white-space:nowrap;font-size:15.5px}
   .op-av{width:30px;height:30px;border-radius:9px;background:#fff;border:1px solid var(--ln2);flex:0 0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -490,6 +492,7 @@
     <div class="hd">
       <button id="backBtn" class="gbtn" style="display:none" onclick="seyfBack()">&lsaquo;</button>
       <span class="t" id="hdTitle">Seyf</span>
+      <span class="demo-badge" title="Namuna ma'lumot — haqiqiy raqamlar emas">namuna</span>
       <button id="themeBtn" class="gbtn thm" onclick="seyfTheme()" style="margin-left:auto" aria-label="Mavzu" title="Mavzu — tungi/kunduzgi"></button>
       <span class="chip" id="roleChip" style="margin-left:10px"></span>
     </div>
@@ -520,10 +523,14 @@
         {name:'KARTA 1466 (Jalinga)',type:'card',cur:'UZS',bal:10542134},
         {name:'KASSA (COM)',type:'cash',cur:'UZS',bal:14152000}
       ]},
-    {code:'jalinga',name:'Jalinga',color:'#43C99B',logo:'seyf-logos/jalinga.jpg',UZS:214000000,USD:28900},
-    {code:'mfaktor_school',name:'Mfaktor maktab',color:'#5EA0F0',logo:'seyf-logos/mfaktor_school.jpg',UZS:268500000,USD:14000},
-    {code:'mfaktor_club',name:'Mfaktor club',color:'#A78BFA',logo:'seyf-logos/mfaktor_club.png',UZS:98000000,USD:7200},
-    {code:'mlp',name:'My Life Planner',color:'#EC6FA0',logo:'seyf-logos/mlp.jpg',UZS:40000000,USD:4800}
+    {code:'jalinga',name:'Jalinga',color:'#43C99B',logo:'seyf-logos/jalinga.jpg',UZS:214000000,USD:28900,
+      wallets:[{name:'Naqd kassa',type:'cash',cur:'UZS',bal:214000000},{name:'Valyuta hisobi',type:'bank',cur:'USD',bal:28900}]},
+    {code:'mfaktor_school',name:'Mfaktor maktab',color:'#5EA0F0',logo:'seyf-logos/mfaktor_school.jpg',UZS:268500000,USD:14000,
+      wallets:[{name:'Naqd kassa',type:'cash',cur:'UZS',bal:268500000},{name:'Valyuta hisobi',type:'bank',cur:'USD',bal:14000}]},
+    {code:'mfaktor_club',name:'Mfaktor club',color:'#A78BFA',logo:'seyf-logos/mfaktor_club.png',UZS:98000000,USD:7200,
+      wallets:[{name:'Naqd kassa',type:'cash',cur:'UZS',bal:98000000},{name:'Valyuta hisobi',type:'bank',cur:'USD',bal:7200}]},
+    {code:'mlp',name:'My Life Planner',color:'#EC6FA0',logo:'seyf-logos/mlp.jpg',UZS:40000000,USD:4800,
+      wallets:[{name:'Naqd kassa',type:'cash',cur:'UZS',bal:40000000},{name:'Valyuta hisobi',type:'bank',cur:'USD',bal:4800}]}
   ];
   var OPS=[
     {type:'income',proj:'mfaktor_school',cur:'UZS',amt:18000000,cat:"Mijoz to'lovi",note:'Trening to\'lovi',date:'bugun 14:20'},
@@ -542,7 +549,7 @@
     {id:3,lender:'impulse',borrower:'mlp',cur:'USD',amount:5000,rate:12700,note:'Boshlang\'ich kapital',date:'12.06 16:30',pays:[{amt:2000,date:'17.06 12:00'}]},
     {id:4,lender:'mfaktor_club',borrower:'jalinga',cur:'UZS',amount:12000000,note:'Reklama',date:'08.06 10:15',pays:[]}
   ];
-  var debtSeq=5;
+  var debtSeq=DEBTS.reduce(function(m,d){return Math.max(m,d.id);},0)+1;
   function dPaid(d){var s=0;(d.pays||[]).forEach(function(p){s+=p.amt;});return s;}
   function dRem(d){return Math.max(0,d.amount-dPaid(d));}
   function dDone(d){return dRem(d)<=0;}
@@ -615,12 +622,16 @@
     if(/^(bugun|hozir|kecha)/i.test(d))return /^kecha/i.test(d)?1:0;
     var m=d.match(/^(\d{1,2})\.(\d{1,2})/);
     if(!m)return 0;
-    var now=new Date(),day=parseInt(m[1],10),mon=parseInt(m[2],10)-1;
-    var dt=new Date(now.getFullYear(),mon,day);
-    if(dt>now)dt=new Date(now.getFullYear()-1,mon,day);
-    return Math.floor((now-dt)/86400000);
+    var n=new Date();var today=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+    var day=parseInt(m[1],10),mon=parseInt(m[2],10)-1;
+    var dt=new Date(today.getFullYear(),mon,day);
+    var diff=Math.round((today-dt)/86400000);
+    if(diff<-180)diff+=365;   // o'tgan yil (masalan dekabrda iyun ko'rilsa)
+    if(diff<0)diff=0;          // shu yildagi kelajak kun → bugungidek
+    return diff;
   }
   function opInPeriod(o){
+    if(st.period==='Hammasi')return true;
     var days=opDaysAgo(o);
     if(st.period==='Kunlik')return days<=0;
     if(st.period==='Haftalik')return days<=7;
@@ -673,17 +684,18 @@
     var sub=(P_(o.proj)||{}).name||'';if(o.counter)sub+=' → '+((P_(o.counter)||{}).name||'');if(o.cat)sub+=' · '+o.cat;
     var cl=o.type==='income'?'gr':(o.type==='expense'?'rd':'');
     var tag=o.repay?' <span class="am" style="font-size:10px">qaytarildi</span>':(o.loan?' <span class="am" style="font-size:10px">qarz</span>':'');
-    var act=(o.live&&canWrite())?('<span class="opact">'+
-      '<button class="e" onclick="seyfEditOp('+o.id+')" aria-label="Tahrirlash"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>'+
-      '<button class="x" onclick="seyfDelOp('+o.id+')" aria-label="O\'chirish"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></button></span>'):'';
+    var delBtn='<button class="x" onclick="seyfDelOp('+o.id+')" aria-label="O\'chirish"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></button>';
+    var act='';
+    if(o.live&&canWrite())act='<span class="opact"><button class="e" onclick="seyfEditOp('+o.id+')" aria-label="Tahrirlash"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>'+delBtn+'</span>';
+    else if(o.fromPay&&canWrite())act='<span class="opact">'+delBtn+'</span>';
     return '<div class="op">'+opAvatar(o.proj)+'<span class="bdg '+BCLS[o.type]+'">'+LAB[o.type]+'</span>'+
-      '<div style="min-width:0"><div>'+esc(o.note||o.cat||sub)+tag+'</div>'+
-      '<div style="font-size:11.5px" class="muted">'+esc(sub)+' · '+esc(o.date)+(o.edited?' · <span style="color:var(--goldl)">tahrirlangan</span>':'')+'</div></div>'+
+      '<div style="min-width:0;flex:1"><div class="opnote">'+esc(o.note||o.cat||sub)+tag+'</div>'+
+      '<div style="font-size:11.5px" class="muted opnote">'+esc(sub)+' · '+esc(o.date)+(o.edited?' · <span style="color:var(--goldl)">tahrirlangan</span>':'')+'</div></div>'+
       '<span class="amt '+cl+'">'+amtTxt+'</span>'+act+'</div>';}
   function renderOps(){
     var h=projFilterBar();
     h+='<div class="pfilter">';
-    ['Kunlik','Haftalik','Oylik','Choraklik'].forEach(function(x){h+='<button class="pf'+(st.period===x?' on':'')+'" onclick="seyfPeriod(\''+x+'\')">'+x+'</button>';});
+    ['Hammasi','Kunlik','Haftalik','Oylik','Choraklik'].forEach(function(x){h+='<button class="pf'+(st.period===x?' on':'')+'" onclick="seyfPeriod(\''+x+'\')">'+x+'</button>';});
     h+='</div>';
     var list=OPS.filter(opVisible).filter(opMatchesFilter).filter(opInPeriod);
     if(!list.length)h+='<div class="muted" style="padding:20px 0;text-align:center">Bu davrда amal yo\'q</div>';
@@ -943,19 +955,22 @@
     var pb=P_(d.borrower),pl=P_(d.lender);
     if(payCur===d.cur){
       var amt=raw;if(amt>rem)amt=rem;
-      d.pays.push({amt:amt,date:'hozir'});
+      var payObj={amt:amt,date:'hozir'};d.pays.push(payObj);var wi=-1;
       if(pb)pb[d.cur]-=amt;
       if(pl){pl[d.cur]+=amt;
-        if(ws&&pl.wallets){var wi=parseInt(ws.value,10);if(pl.wallets[wi]){pl.wallets[wi].bal+=amt;wname=pl.wallets[wi].name;}}}
-      OPS.unshift({type:'transfer',id:opSeq++,fromPay:true,proj:d.borrower,counter:d.lender,cur:d.cur,amt:amt,loan:true,note:'Qarz qaytarildi'+(wname?(' → '+wname):''),date:'hozir'});
+        if(ws&&pl.wallets){wi=parseInt(ws.value,10);if(pl.wallets[wi]){pl.wallets[wi].bal+=amt;wname=pl.wallets[wi].name;}else wi=-1;}}
+      OPS.unshift({type:'transfer',id:opSeq++,fromPay:true,proj:d.borrower,counter:d.lender,cur:d.cur,amt:amt,loan:true,note:'Qarz qaytarildi'+(wname?(' → '+wname):''),date:'hozir',
+        _rev:{debtId:d.id,pay:payObj,kind:'direct',amt:amt,cur:d.cur,lender:d.lender,borrower:d.borrower,wi:wi}});
     } else {
-      var som=raw;var maxSom=Math.round(rem*d.rate);if(som>maxSom)som=maxSom;
-      var redUsd=som/d.rate;if(redUsd>rem)redUsd=rem;
-      d.pays.push({amt:redUsd,date:'hozir',payCur:'UZS',som:som});
+      var som=Math.round(raw);var maxSom=Math.round(rem*d.rate);if(som>maxSom)som=maxSom;
+      var redUsd=Math.round(som/d.rate);if(redUsd>rem)redUsd=rem;
+      if(som>=maxSom)redUsd=rem;   // to'liq to'lov → qoldiq aniq nolga
+      var payObj2={amt:redUsd,date:'hozir',payCur:'UZS',som:som,rate:d.rate};d.pays.push(payObj2);var wj=-1;
       if(pb)pb['UZS']-=som;
       if(pl){pl['UZS']+=som;
-        if(ws&&pl.wallets){var wj=parseInt(ws.value,10);if(pl.wallets[wj]){pl.wallets[wj].bal+=som;wname=pl.wallets[wj].name;}}}
-      OPS.unshift({type:'transfer',id:opSeq++,fromPay:true,proj:d.borrower,counter:d.lender,cur:'UZS',amt:som,loan:true,note:'Dollar qarz so\'mda qaytarildi (≈ $'+grp(Math.round(redUsd))+')'+(wname?(' → '+wname):''),date:'hozir'});
+        if(ws&&pl.wallets){wj=parseInt(ws.value,10);if(pl.wallets[wj]){pl.wallets[wj].bal+=som;wname=pl.wallets[wj].name;}else wj=-1;}}
+      OPS.unshift({type:'transfer',id:opSeq++,fromPay:true,proj:d.borrower,counter:d.lender,cur:'UZS',amt:som,loan:true,note:'Dollar qarz so\'mda qaytarildi (≈ $'+grp(Math.round(redUsd))+')'+(wname?(' → '+wname):''),date:'hozir',
+        _rev:{debtId:d.id,pay:payObj2,kind:'som',som:som,lender:d.lender,borrower:d.borrower,wi:wj}});
     }
     st.payCur=null;
     renderDebtDetail(id);
@@ -997,9 +1012,14 @@
   var AI_BASE=(location.hostname.indexOf('railway.app')>=0)?'':'https://seyf-web-production.up.railway.app';
   function seyfAiCtx(){
     var vis=visible();var tu=0,td=0;vis.forEach(function(p){tu+=p.UZS;td+=p.USD;});
-    var debts=DEBTS.filter(function(d){return dRem(d)>0&&(st.role!=='owner'||d.lender===st.sc||d.borrower===st.sc);}).map(function(d){return {qarzdor:(P_(d.borrower)||{}).name,beruvchi:(P_(d.lender)||{}).name,valyuta:d.cur,qoldiq:dRem(d),izoh:d.note};});
-    var ops=OPS.filter(opVisible).slice(0,20).map(function(o){return {tur:LAB[o.type],loyiha:(P_(o.proj)||{}).name,kimga:(o.counter?(P_(o.counter)||{}).name:undefined),valyuta:o.cur,summa:(o.type==='exchange'?(o.sellAmt+' '+o.sellCur+' -> '+o.buyAmt+' '+o.buyCur):o.amt),izoh:o.note||o.cat,sana:o.date};});
-    return {jami:{som:tu,dollar:td},loyihalar:vis.map(function(p){return {nom:p.name,som:p.UZS,dollar:p.USD};}),qarzlar:debts,songgi_amallar:ops};
+    var allOps=OPS.filter(opVisible);
+    var kirimU=0,chiqimU=0;allOps.forEach(function(o){if(o.cur==='UZS'){if(o.type==='income')kirimU+=o.amt;else if(o.type==='expense')chiqimU+=o.amt;}});
+    var dl=DEBTS.filter(function(d){return dRem(d)>0&&(st.role!=='owner'||d.lender===st.sc||d.borrower===st.sc);});
+    var debts=dl.map(function(d){return {qarzdor:(P_(d.borrower)||{}).name,beruvchi:(P_(d.lender)||{}).name,valyuta:d.cur,qoldiq:dRem(d),tolangan:dPaid(d),izoh:d.note};});
+    var ops=allOps.slice(0,20).map(function(o){return {tur:LAB[o.type],loyiha:(P_(o.proj)||{}).name,kimga:(o.counter?(P_(o.counter)||{}).name:undefined),valyuta:o.cur,summa:(o.type==='exchange'?(o.sellAmt+' '+o.sellCur+' -> '+o.buyAmt+' '+o.buyCur):o.amt),izoh:o.note||o.cat,sana:o.date};});
+    return {jami:{som:tu,dollar:td},loyihalar:vis.map(function(p){return {nom:p.name,som:p.UZS,dollar:p.USD};}),
+      qarzlar:debts,amallar_jami:allOps.length,korsatilgan_amallar:ops.length,
+      jami_kirim_som:kirimU,jami_chiqim_som:chiqimU,songgi_amallar:ops};
   }
   function renderAiThread(){
     var t=$('aiThread');if(!t)return;
@@ -1027,7 +1047,7 @@
   window.seyfAskInput=function(){var inp=$('aiInput');if(inp&&inp.value.trim()){var q=inp.value.trim();inp.value='';seyfAsk(q);}};
   window.seyfAsk=function(q){
     if(typeof q==='number')q=AIQ[q]||'';q=(q||'').trim();if(!q)return;
-    var hist=st.aiHist.slice();
+    var hist=st.aiHist.slice(-10);
     st.aiHist.push({role:'user',content:q});st.aiPending=true;
     var orb=$('aiOrb');if(orb)orb.classList.remove('live');
     renderAI();aiSetStatus('O\'ylayapman…');
@@ -1054,13 +1074,13 @@
         var mt=mr.mimeType||mime||'audio/webm';var blob=new Blob(chunks,{type:mt});
         if(!blob.size){aiSetStatus('Ovoz yozilmadi — qaytadan');return;}
         st.aiPending=true;renderAiThread();aiSetStatus('Eshityapman…');
-        var hist=st.aiHist.slice();
+        var hist=st.aiHist.slice(-10);
         var fd=new FormData();fd.append('audio',blob,'ovoz.'+(mt.indexOf('mp4')>=0?'mp4':'webm'));fd.append('ctx',JSON.stringify(seyfAiCtx()));fd.append('history',JSON.stringify(hist));
         fetch(AI_BASE+'/ai/voice',{method:'POST',body:fd}).then(function(r){return r.json();}).then(function(d){
           st.aiPending=false;
           if(!d.ok){aiSetStatus(d.error||'Xato');renderAiThread();return;}
           st.aiHist.push({role:'user',content:d.text||'(ovoz)'});
-          st.aiHist.push({role:'assistant',content:d.answer||'(javob yo\'q)'});
+          st.aiHist.push({role:'assistant',content:d.answer||d.answer_error||'(javob yo\'q)'});
           renderAI();
         }).catch(function(){st.aiPending=false;aiSetStatus('Server bilan bog\'lanib bo\'lmadi');renderAiThread();});
       };
@@ -1109,6 +1129,15 @@
       o.paysApplied=[];o.debtCreated=null;
     }
   }
+  // Qarz to'lovini (seyfPay) orqaga qaytarish
+  function revertPay(o){
+    var r=o._rev;if(!r)return;
+    var d=debtById(r.debtId);
+    if(d&&d.pays){var i=d.pays.indexOf(r.pay);if(i>=0)d.pays.splice(i,1);}
+    var pb=P_(r.borrower),pl=P_(r.lender);var amt=(r.kind==='som')?r.som:r.amt;var cur=(r.kind==='som')?'UZS':r.cur;
+    if(pb)pb[cur]+=amt;
+    if(pl){pl[cur]-=amt;if(r.wi>=0&&pl.wallets&&pl.wallets[r.wi])pl.wallets[r.wi].bal-=amt;}
+  }
   window.seyfSave=function(){
     var t=st.newType,note=($('f_note')&&$('f_note').value||'').trim();
     var ed=st.editId?opById(st.editId):null;if(ed)t=ed.type;
@@ -1127,9 +1156,9 @@
     seyfGo('ops');};
   var LOCKMSG='Bu o\'tkazma yaratgan qarz bo\'yicha keyin to\'lov qilingan. Avval o\'sha to\'lov(lar)ni bekor qiling, so\'ng bu amalni o\'zgartiring.';
   window.seyfEditOp=function(id){var o=opById(id);if(!o||!o.live)return;if(opLocked(o)){alert(LOCKMSG);return;}st.editId=id;st.newType=o.type;st.newProj=o.proj;seyfGo('new');};
-  window.seyfDelOp=function(id){var o=opById(id);if(!o||!o.live)return;if(opLocked(o)){alert(LOCKMSG);return;}if(!confirm('Bu amal o\'chirilsinmi? Balanslar tiklanadi.'))return;revertOp(o);var ix=OPS.indexOf(o);if(ix>=0)OPS.splice(ix,1);st.editId=null;render();};
+  window.seyfDelOp=function(id){var o=opById(id);if(!o)return;if(!o.live&&!o.fromPay)return;if(opLocked(o)){alert(LOCKMSG);return;}if(!confirm('Bu amal o\'chirilsinmi? Balanslar tiklanadi.'))return;if(o.fromPay){revertPay(o);}else{revertOp(o);}var ix=OPS.indexOf(o);if(ix>=0)OPS.splice(ix,1);st.editId=null;render();};
   window.seyfNew=function(){st.editId=null;st.newProj=null;seyfGo('new');};
-  $('codeIn').addEventListener('keydown',function(e){if(e.key==='Enter')seyfLogin();});
+  $('codeIn').addEventListener('keydown',function(e){if(e.key==='Enter'){var b=document.querySelector('.vx-enter');if(b)b.click();else seyfLogin();}});
   (function(){var t='night';try{t=localStorage.getItem('seyfTheme')||'night';}catch(e){}applyTheme(t);})();
 })();
 </script>
